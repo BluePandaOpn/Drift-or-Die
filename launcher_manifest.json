@@ -1,0 +1,10 @@
+{
+  "game": "Drift or Die",
+  "version": "1.0.0",
+  "notes": [
+    "Launcher renovado con instalacion local automatica.",
+    "Detecta .exe empaquetado o usa main.py con Python.",
+    "Incluye reparacion de instalacion y acceso rapido a la carpeta del juego.",
+    "Estado del sistema y versiones visibles dentro del launcher."
+  ]
+}
