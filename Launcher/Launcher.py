@@ -50,6 +50,13 @@ def parse_version(version_text):
     return tuple((parts + [0, 0, 0])[:3])
 
 
+def max_version_text(*versions):
+    cleaned_versions = [version for version in versions if isinstance(version, str) and version.strip()]
+    if not cleaned_versions:
+        return "0.0.0"
+    return max(cleaned_versions, key=parse_version)
+
+
 def get_project_root():
     if getattr(sys, "frozen", False):
         return getattr(sys, "_MEIPASS", os.path.dirname(sys.executable))
@@ -551,6 +558,23 @@ class SnakeLauncher(ctk.CTk):
             },
         })
 
+    def fetch_remote_game_version(self):
+        response = requests.get(FALLBACK_GAME_VERSION_URL, timeout=8)
+        response.raise_for_status()
+        return response.text.strip()
+
+    def sync_manifest_game_version(self, manifest):
+        remote_text_version = None
+        try:
+            remote_text_version = self.fetch_remote_game_version()
+        except Exception:
+            remote_text_version = None
+
+        manifest_game_version = manifest.get("game", {}).get("version", "0.0.0")
+        effective_version = max_version_text(manifest_game_version, remote_text_version)
+        manifest["game"]["version"] = effective_version
+        return manifest
+
     def download_file(self, url, destination, progress_prefix):
         temp_destination = f"{destination}.download"
         ensure_directory(os.path.dirname(destination))
@@ -740,6 +764,7 @@ class SnakeLauncher(ctk.CTk):
             self.show_toast("Instalacion no disponible", "Conecta Internet para descargar el juego.", ERROR)
             return
 
+        manifest = self.sync_manifest_game_version(manifest)
         self.remote_manifest = manifest
         self.set_versions(
             game_text=f"Juego instalado: {read_text_file(GAME_VERSION_PATH, 'Sin instalar')} -> remoto {manifest['game']['version']}",
