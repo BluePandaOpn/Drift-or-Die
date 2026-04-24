@@ -1,0 +1,48 @@
+# ==========================================
+# GITIGNORE PARA PROYECTO SNAKE (PYTHON)
+# ==========================================
+
+# --- Python ---
+__pycache__/
+*.py[cod]
+*$py.class
+.Python
+*.so
+
+# --- Entorno Virtual ---
+# Ignora la carpeta .venv que aparece en tu comando 'tree'
+.venv/
+venv/
+ENV/
+env/
+
+# --- Compilación y Distribución ---
+# Ignoramos build porque son archivos temporales pesados
+build/
+*.spec
+
+# --- EXCEPCIÓN: Carpeta BIN ---
+# Permitimos que la carpeta bin y todo su contenido se suba
+!bin/
+!bin/**
+
+# --- Archivos de Distribución (Opcional) ---
+# Si quieres subir tus ejecutables finales dentro de 'dist', 
+# descomenta la línea de abajo. Por ahora se ignora.
+dist/
+
+# --- Configuración de Editores (VS Code, PyCharm, etc.) ---
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- Archivos de Sistema ---
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# --- Logs y archivos temporales ---
+*.log
+pip-log.txt
+pip-delete-this-directory.txt
