@@ -18,6 +18,8 @@ COLOR_UI = (20, 20, 20)
 COLOR_NITRO = (0, 191, 255)
 COLOR_COLLECTIBLE = (255, 215, 0)
 COLOR_HEALTH = (50, 200, 50)
+COLOR_MAGNET = (255, 80, 120)
+COLOR_SHIELD = (70, 240, 255)
 
 GRID_SIZE = 200
 PARTICLE_CULL_MARGIN = 30
@@ -31,6 +33,12 @@ UPGRADE_SPAWN_RADIUS_MIN = 450
 UPGRADE_SPAWN_RADIUS_MAX = 1250
 AI_SPAWN_RADIUS_MIN = 350
 AI_SPAWN_RADIUS_MAX = 900
+MAGNET_RADIUS = 260
+MAGNET_PULL_STRENGTH = 0.14
+SHIELD_DURATION = 300
+MAGNET_DURATION = 300
+AI_INTERCEPT_ANTICIPATION = 22
+AI_RESPAWN_DISTANCE = 2000
 
 
 def world_to_screen(x, y, cam_x, cam_y):
@@ -113,9 +121,16 @@ class Upgrade:
     def __init__(self, x, y):
         self.x = float(x)
         self.y = float(y)
-        self.type = random.choice(["speed", "drift", "nitro", "accel"])
+        self.type = random.choice(["speed", "drift", "nitro", "accel", "magnet", "shield"])
         self.angle = 0.0
-        self.color = COLOR_NITRO if self.type == "nitro" else COLOR_COLLECTIBLE
+        if self.type == "nitro":
+            self.color = COLOR_NITRO
+        elif self.type == "magnet":
+            self.color = COLOR_MAGNET
+        elif self.type == "shield":
+            self.color = COLOR_SHIELD
+        else:
+            self.color = COLOR_COLLECTIBLE
 
     def draw(self, surface, cam_x, cam_y):
         self.angle += 0.08
@@ -165,10 +180,14 @@ class Car:
         self.is_braking = False
         self.is_nitro_active = False
         self.particles = []
+        self.magnet_timer = 0
+        self.shield_timer = 0
 
         # Buffs (IA)
         self.buff_timer = 0
         self.is_buffed = False
+        self.ai_error_x = random.uniform(-90.0, 90.0) if is_ai else 0.0
+        self.ai_error_y = random.uniform(-90.0, 90.0) if is_ai else 0.0
 
     def setup_class(self, choice):
         if choice == 0:  # DRIFT KING
@@ -197,6 +216,10 @@ class Car:
         elif upg_type == "drift":
             self.drift_factor = min(0.98, self.drift_factor + 0.01)
             self.rotation_speed += 0.4
+        elif upg_type == "magnet":
+            self.magnet_timer = MAGNET_DURATION
+        elif upg_type == "shield":
+            self.shield_timer = SHIELD_DURATION
 
     def lose_random_upgrade(self):
         if self.collected_types:
@@ -218,6 +241,7 @@ class Car:
         input_right = False
         input_handbrake = False
         input_nitro = False
+        threshold_brake = False
 
         if not self.is_ai:
             input_fwd = keys_or_target[pygame.K_w]
@@ -236,17 +260,30 @@ class Car:
 
             dist = math.hypot(keys_or_target.x - self.x, keys_or_target.y - self.y)
             if dist < 1200:
-                target_angle = math.degrees(math.atan2(-(keys_or_target.y - self.y), keys_or_target.x - self.x))
+                anticipacion = AI_INTERCEPT_ANTICIPATION + random.uniform(-4.0, 6.0)
+                future_x = keys_or_target.x + (keys_or_target.dir_x * anticipacion) + self.ai_error_x
+                future_y = keys_or_target.y + (keys_or_target.dir_y * anticipacion) + self.ai_error_y
+                target_angle = math.degrees(math.atan2(-(future_y - self.y), future_x - self.x))
                 angle_diff = (target_angle - self.angle + 180) % 360 - 180
                 if angle_diff > 5:
                     input_left = True
                 elif angle_diff < -5:
                     input_right = True
                 input_fwd = True
+                if dist < 140 or (dist < 260 and abs(angle_diff) > 55):
+                    threshold_brake = True
                 if dist < 100:
                     input_handbrake = True
 
         self.is_nitro_active = input_nitro
+        if not self.is_ai:
+            if self.magnet_timer > 0:
+                self.magnet_timer -= 1
+            if self.shield_timer > 0:
+                self.shield_timer -= 1
+
+        if threshold_brake:
+            input_handbrake = True
         actual_accel = self.acceleration + (self.nitro_power if self.is_nitro_active else 0)
         actual_max = self.max_speed + (8 if self.is_nitro_active else 0)
 
@@ -323,6 +360,13 @@ class Car:
             return
 
         car_w, car_h = 56, 32
+
+        if self.shield_timer > 0:
+            shield_radius = 36 + math.sin(pygame.time.get_ticks() * 0.015) * 3
+            pygame.draw.circle(surface, (*COLOR_SHIELD, 70), (int(screen_x), int(screen_y)), int(shield_radius), 3)
+        elif self.magnet_timer > 0:
+            pulse_radius = 30 + math.sin(pygame.time.get_ticks() * 0.02) * 6
+            pygame.draw.circle(surface, (*COLOR_MAGNET, 60), (int(screen_x), int(screen_y)), int(pulse_radius), 2)
 
         shadow_surf = pygame.Surface((car_w, car_h), pygame.SRCALPHA)
         pygame.draw.rect(shadow_surf, (0, 0, 0, 80), (0, 0, car_w, car_h), border_radius=8)
@@ -456,6 +500,43 @@ class Game:
         )
         self.upgrades.append(Upgrade(x, y))
 
+    def apply_magnet_effect(self):
+        if self.player.magnet_timer <= 0:
+            return
+
+        for upgrade in self.upgrades:
+            dx = self.player.x - upgrade.x
+            dy = self.player.y - upgrade.y
+            dist = math.hypot(dx, dy)
+            if dist <= 0.001 or dist > MAGNET_RADIUS:
+                continue
+
+            angle = math.atan2(dy, dx)
+            strength = (1.0 - (dist / MAGNET_RADIUS)) * MAGNET_PULL_STRENGTH
+            target_x = upgrade.x + math.cos(angle) * dist * strength
+            target_y = upgrade.y + math.sin(angle) * dist * strength
+            upgrade.x += (target_x - upgrade.x) * 0.55
+            upgrade.y += (target_y - upgrade.y) * 0.55
+
+    def respawn_far_ais(self):
+        move_x = self.player.dir_x if abs(self.player.dir_x) > 0.1 else math.cos(math.radians(self.player.angle)) * 8
+        move_y = self.player.dir_y if abs(self.player.dir_y) > 0.1 else -math.sin(math.radians(self.player.angle)) * 8
+        heading = math.atan2(move_y, move_x)
+
+        for ai in self.ais:
+            dist = math.hypot(ai.x - self.player.x, ai.y - self.player.y)
+            if dist <= AI_RESPAWN_DISTANCE:
+                continue
+
+            offset_angle = heading + random.uniform(-0.7, 0.7)
+            spawn_distance = random.uniform(650, 1100)
+            ai.x = self.player.x + math.cos(offset_angle) * spawn_distance
+            ai.y = self.player.y + math.sin(offset_angle) * spawn_distance
+            ai.dir_x = 0.0
+            ai.dir_y = 0.0
+            ai.speed = max(2.0, self.player.speed * 0.55)
+            ai.angle = math.degrees(math.atan2(-move_y, move_x)) + random.uniform(-18.0, 18.0)
+
     def maintain_upgrade_density(self, force_full=False):
         if force_full:
             self.upgrades.clear()
@@ -525,6 +606,8 @@ class Game:
 
         self.skid_marks = [mark for mark in self.skid_marks if mark.update()]
         self.maintain_upgrade_density()
+        self.apply_magnet_effect()
+        self.respawn_far_ais()
 
         # Colisiones Mejoras
         for u in self.upgrades[:]:
@@ -539,12 +622,24 @@ class Game:
         else:
             for ai in self.ais:
                 if math.hypot(self.player.x - ai.x, self.player.y - ai.y) < 45:
-                    self.player.health -= 20
-                    self.player.lose_random_upgrade()
-                    self.invul_timer = 90
-                    self.score = max(0, self.score - 1000)
-                    if self.player.health <= 0:
-                        self.state = "GAME_OVER"
+                    if self.player.shield_timer > 0:
+                        repel_dx = ai.x - self.player.x
+                        repel_dy = ai.y - self.player.y
+                        repel_dist = math.hypot(repel_dx, repel_dy) or 1.0
+                        repel_force = 14.0
+                        ai.dir_x += (repel_dx / repel_dist) * repel_force
+                        ai.dir_y += (repel_dy / repel_dist) * repel_force
+                        ai.speed = min(ai.max_speed + 4, abs(ai.speed) + 3)
+                        ai.x += (repel_dx / repel_dist) * 18
+                        ai.y += (repel_dy / repel_dist) * 18
+                        self.score += 150
+                    else:
+                        self.player.health -= 20
+                        self.player.lose_random_upgrade()
+                        self.invul_timer = 90
+                        self.score = max(0, self.score - 1000)
+                        if self.player.health <= 0:
+                            self.state = "GAME_OVER"
 
     def draw_game(self):
         self.screen.fill(COLOR_BG)
