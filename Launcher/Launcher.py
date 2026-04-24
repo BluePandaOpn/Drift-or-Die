@@ -14,24 +14,25 @@ import requests
 
 
 APP_NAME = "Drift Or Die Hub"
-GAME_NAME = "Drift Or Die Pro"
+GAME_NAME = "Drift Or Die"
 LAUNCHER_VERSION = "1.2.0"
+GAME_EXECUTABLE_NAME = "Drift or Die.exe"
+LAUNCHER_EXECUTABLE_NAME = "DriftOrDieLauncher.exe"
 
 USER_PROFILE = os.path.expanduser("~")
 DOCUMENTS_DIR = os.path.join(USER_PROFILE, "Documents")
 ROOT_INSTALL_DIR = os.path.join(DOCUMENTS_DIR, "DriftOrDie")
 LAUNCHER_INSTALL_DIR = os.path.join(ROOT_INSTALL_DIR, "Launcher")
 GAME_INSTALL_DIR = os.path.join(ROOT_INSTALL_DIR, "Game")
-LAUNCHER_EXECUTABLE_PATH = os.path.join(LAUNCHER_INSTALL_DIR, "DriftOrDieLauncher.exe")
-GAME_EXECUTABLE_PATH = os.path.join(GAME_INSTALL_DIR, "Snake.exe")
+LAUNCHER_EXECUTABLE_PATH = os.path.join(LAUNCHER_INSTALL_DIR, LAUNCHER_EXECUTABLE_NAME)
+GAME_EXECUTABLE_PATH = os.path.join(GAME_INSTALL_DIR, GAME_EXECUTABLE_NAME)
 GAME_VERSION_PATH = os.path.join(GAME_INSTALL_DIR, "version.txt")
 LAUNCHER_STATE_PATH = os.path.join(LAUNCHER_INSTALL_DIR, "launcher_state.json")
-DESKTOP_SHORTCUT_PATH = os.path.join(os.path.join(USER_PROFILE, "Desktop"), "Drift Or Die Launcher.lnk")
 
 RAW_BASE_URL = "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main"
 MANIFEST_URL = f"{RAW_BASE_URL}/launcher_manifest.json"
-FALLBACK_GAME_URL = "https://github.com/BluePandaOpn/Drift-or-Die/raw/main/bin/Snake.exe"
-FALLBACK_LAUNCHER_URL = "https://github.com/BluePandaOpn/Drift-or-Die/raw/main/Launcher/SnakeLauncher.exe"
+FALLBACK_GAME_URL = "https://github.com/BluePandaOpn/Drift-or-Die/raw/main/bin/Drift%20or%20Die.exe"
+FALLBACK_LAUNCHER_URL = "https://github.com/BluePandaOpn/Drift-or-Die/raw/main/Launcher/DriftOrDieLauncher.exe"
 FALLBACK_GAME_VERSION_URL = f"{RAW_BASE_URL}/version.txt"
 
 ACCENT = "#2ecc71"
@@ -72,6 +73,30 @@ def ensure_directory(path):
     return path
 
 
+def get_desktop_directory():
+    desktop_dir = os.path.join(USER_PROFILE, "Desktop")
+    try:
+        command = [
+            "powershell",
+            "-NoProfile",
+            "-ExecutionPolicy",
+            "Bypass",
+            "-Command",
+            "[Environment]::GetFolderPath('Desktop')",
+        ]
+        creation_flags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+        result = subprocess.run(command, check=True, capture_output=True, text=True, creationflags=creation_flags)
+        resolved_path = result.stdout.strip()
+        if resolved_path:
+            desktop_dir = resolved_path
+    except Exception:
+        pass
+    return desktop_dir
+
+
+DESKTOP_SHORTCUT_PATH = os.path.join(get_desktop_directory(), "Drift Or Die Launcher.lnk")
+
+
 def read_text_file(path, default_value=""):
     try:
         with open(path, "r", encoding="utf-8") as file_obj:
@@ -93,10 +118,65 @@ def copy_file(source_path, destination_path):
     os.replace(temp_copy, destination_path)
 
 
-def create_windows_shortcut(shortcut_path, target_path, working_directory, icon_path=None):
+def first_existing_file(candidates):
+    for candidate in candidates:
+        if candidate and os.path.isfile(candidate):
+            return candidate
+    return None
+
+
+def normalize_manifest(manifest):
+    if not isinstance(manifest, dict):
+        raise ValueError("Formato de manifiesto invalido.")
+
+    game_section = manifest.get("game")
+    launcher_section = manifest.get("launcher")
+
+    if not isinstance(game_section, dict):
+        game_section = {
+            "name": manifest.get("game", GAME_NAME),
+            "version": manifest.get("version", read_text_file(GAME_VERSION_PATH, "0.0.0")),
+            "url": manifest.get("game_url", FALLBACK_GAME_URL),
+            "notes": manifest.get("notes", []),
+        }
+
+    if not isinstance(launcher_section, dict):
+        launcher_section = {
+            "name": APP_NAME,
+            "version": manifest.get("launcher_version", LAUNCHER_VERSION),
+            "url": manifest.get("launcher_url", FALLBACK_LAUNCHER_URL),
+            "notes": manifest.get("launcher_notes", []),
+        }
+
+    game_section.setdefault("name", GAME_NAME)
+    game_section.setdefault("version", read_text_file(GAME_VERSION_PATH, "0.0.0"))
+    game_section.setdefault("url", FALLBACK_GAME_URL)
+    game_section.setdefault("notes", [])
+
+    launcher_section.setdefault("name", APP_NAME)
+    launcher_section.setdefault("version", LAUNCHER_VERSION)
+    launcher_section.setdefault("url", FALLBACK_LAUNCHER_URL)
+    launcher_section.setdefault("notes", [])
+
+    assets_section = manifest.get("assets", {})
+    if not isinstance(assets_section, dict):
+        assets_section = {}
+
+    assets_section.setdefault("logo", "assets/logo.png")
+    assets_section.setdefault("demo_images", ["assets/demo/demo-01.png"])
+
+    return {
+        "game": game_section,
+        "launcher": launcher_section,
+        "assets": assets_section,
+    }
+
+
+def create_windows_shortcut(shortcut_path, target_path, working_directory, icon_path=None, arguments=""):
     shortcut_path = shortcut_path.replace("'", "''")
     target_path = target_path.replace("'", "''")
     working_directory = working_directory.replace("'", "''")
+    arguments = (arguments or "").replace("'", "''")
     icon_literal = "$null"
     if icon_path:
         icon_literal = "'" + icon_path.replace("'", "''") + "'"
@@ -105,7 +185,8 @@ def create_windows_shortcut(shortcut_path, target_path, working_directory, icon_
         f"$shortcut = $ws.CreateShortcut('{shortcut_path}'); "
         f"$shortcut.TargetPath = '{target_path}'; "
         f"$shortcut.WorkingDirectory = '{working_directory}'; "
-        "$shortcut.Description = 'Snake Launcher'; "
+        f"$shortcut.Arguments = '{arguments}'; "
+        "$shortcut.Description = 'Drift Or Die Launcher'; "
         f"if ({icon_literal} -ne $null) {{ $shortcut.IconLocation = {icon_literal}; }} "
         "$shortcut.Save()"
     )
@@ -149,7 +230,7 @@ class SnakeLauncher(ctk.CTk):
     def build_layout(self):
         self.label_titulo = ctk.CTkLabel(
             self,
-            text="SNAKE ENGINE",
+            text="DRIFT OR DIE",
             font=("Arial", 26, "bold"),
             text_color="white",
         )
@@ -308,15 +389,105 @@ class SnakeLauncher(ctk.CTk):
         ensure_directory(LAUNCHER_INSTALL_DIR)
         ensure_directory(GAME_INSTALL_DIR)
 
+    def get_local_game_binary_candidates(self):
+        project_root = get_project_root()
+        return [
+            os.path.join(project_root, "bin", GAME_EXECUTABLE_NAME),
+            os.path.join(project_root, "dist", GAME_EXECUTABLE_NAME),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), GAME_EXECUTABLE_NAME),
+        ]
+
+    def get_local_launcher_binary_candidates(self):
+        project_root = get_project_root()
+        return [
+            os.path.join(project_root, "dist", LAUNCHER_EXECUTABLE_NAME),
+            os.path.join(project_root, "Launcher", LAUNCHER_EXECUTABLE_NAME),
+            os.path.join(project_root, "Launcher", "SnakeLauncher.exe"),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), LAUNCHER_EXECUTABLE_NAME),
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), "SnakeLauncher.exe"),
+        ]
+
+    def get_launcher_shortcut_target(self):
+        icon_path = get_resource_path("ico.ico")
+        project_root = get_project_root()
+        launcher_script = os.path.join(project_root, "Launcher", "Launcher.py")
+
+        installed_launcher = first_existing_file([LAUNCHER_EXECUTABLE_PATH])
+        if installed_launcher:
+            return {
+                "target_path": installed_launcher,
+                "arguments": "",
+                "working_directory": os.path.dirname(installed_launcher),
+                "icon_path": icon_path or installed_launcher,
+            }
+
+        if getattr(sys, "frozen", False) and os.path.isfile(sys.executable):
+            current_launcher = os.path.abspath(sys.executable)
+            return {
+                "target_path": current_launcher,
+                "arguments": "",
+                "working_directory": os.path.dirname(current_launcher),
+                "icon_path": icon_path or current_launcher,
+            }
+
+        local_launcher_binary = first_existing_file(self.get_local_launcher_binary_candidates())
+        if local_launcher_binary:
+            return {
+                "target_path": local_launcher_binary,
+                "arguments": "",
+                "working_directory": os.path.dirname(local_launcher_binary),
+                "icon_path": icon_path or local_launcher_binary,
+            }
+
+        if os.path.isfile(launcher_script):
+            pythonw_candidates = [
+                os.path.join(os.path.dirname(sys.executable), "pythonw.exe"),
+                sys.executable,
+            ]
+            launcher_python = first_existing_file(pythonw_candidates) or sys.executable
+            return {
+                "target_path": launcher_python,
+                "arguments": f'"{launcher_script}"',
+                "working_directory": project_root,
+                "icon_path": icon_path or launcher_python,
+            }
+
+        return None
+
+    def get_runtime_game_entry(self):
+        installed_binary = first_existing_file([GAME_EXECUTABLE_PATH])
+        if installed_binary:
+            return ([installed_binary], GAME_INSTALL_DIR, "binario")
+
+        local_binary = first_existing_file(self.get_local_game_binary_candidates())
+        if local_binary:
+            return ([local_binary], os.path.dirname(local_binary), "binario-local")
+
+        project_root = get_project_root()
+        local_script = os.path.join(project_root, "main.py")
+        if os.path.isfile(local_script):
+            return ([sys.executable, local_script], project_root, "python")
+
+        return (None, None, None)
+
+    def seed_game_from_local_build(self):
+        if os.path.exists(GAME_EXECUTABLE_PATH):
+            return False
+
+        local_game_binary = first_existing_file(self.get_local_game_binary_candidates())
+        if not local_game_binary:
+            return False
+
+        copy_file(local_game_binary, GAME_EXECUTABLE_PATH)
+        if not os.path.exists(GAME_VERSION_PATH):
+            write_text_file(GAME_VERSION_PATH, read_text_file(os.path.join(get_project_root(), "version.txt"), "0.0.0"))
+        return True
+
     def seed_launcher_from_local_build(self):
         if os.path.exists(LAUNCHER_EXECUTABLE_PATH):
             return False
 
-        local_build_candidates = [
-            os.path.join(get_project_root(), "Launcher", "SnakeLauncher.exe"),
-            os.path.join(os.path.dirname(os.path.abspath(__file__)), "SnakeLauncher.exe"),
-        ]
-        for candidate in local_build_candidates:
+        for candidate in self.get_local_launcher_binary_candidates():
             if os.path.isfile(candidate):
                 copy_file(candidate, LAUNCHER_EXECUTABLE_PATH)
                 self.ensure_desktop_shortcut()
@@ -342,16 +513,18 @@ class SnakeLauncher(ctk.CTk):
         return True
 
     def ensure_desktop_shortcut(self):
-        if not os.path.exists(LAUNCHER_EXECUTABLE_PATH):
+        shortcut_target = self.get_launcher_shortcut_target()
+        if not shortcut_target:
             return
 
-        icon_path = get_resource_path("ico.ico")
         try:
+            ensure_directory(os.path.dirname(DESKTOP_SHORTCUT_PATH))
             create_windows_shortcut(
                 DESKTOP_SHORTCUT_PATH,
-                LAUNCHER_EXECUTABLE_PATH,
-                LAUNCHER_INSTALL_DIR,
-                icon_path or LAUNCHER_EXECUTABLE_PATH,
+                shortcut_target["target_path"],
+                shortcut_target["working_directory"],
+                shortcut_target["icon_path"],
+                shortcut_target["arguments"],
             )
         except Exception:
             pass
@@ -359,22 +532,13 @@ class SnakeLauncher(ctk.CTk):
     def fetch_manifest(self):
         response = requests.get(MANIFEST_URL, timeout=8)
         response.raise_for_status()
-        manifest = response.json()
-        game_info = manifest.get("game", {})
-        launcher_info = manifest.get("launcher", {})
-        game_info.setdefault("version", read_text_file(GAME_VERSION_PATH, "0.0.0"))
-        game_info.setdefault("url", FALLBACK_GAME_URL)
-        launcher_info.setdefault("version", LAUNCHER_VERSION)
-        launcher_info.setdefault("url", FALLBACK_LAUNCHER_URL)
-        manifest["game"] = game_info
-        manifest["launcher"] = launcher_info
-        return manifest
+        return normalize_manifest(response.json())
 
     def fetch_manifest_fallback(self):
         version_response = requests.get(FALLBACK_GAME_VERSION_URL, timeout=8)
         version_response.raise_for_status()
         game_version = version_response.text.strip()
-        return {
+        return normalize_manifest({
             "game": {
                 "version": game_version,
                 "url": FALLBACK_GAME_URL,
@@ -385,7 +549,7 @@ class SnakeLauncher(ctk.CTk):
                 "url": FALLBACK_LAUNCHER_URL,
                 "notes": ["Modo de compatibilidad sin manifiesto remoto."],
             },
-        }
+        })
 
     def download_file(self, url, destination, progress_prefix):
         temp_destination = f"{destination}.download"
@@ -461,7 +625,7 @@ class SnakeLauncher(ctk.CTk):
             return False
 
         temp_dir = tempfile.mkdtemp(prefix="snake-launcher-binary-")
-        downloaded_launcher = os.path.join(temp_dir, "SnakeLauncher.exe")
+        downloaded_launcher = os.path.join(temp_dir, LAUNCHER_EXECUTABLE_NAME)
         self.download_file(remote_url, downloaded_launcher, "Descargando launcher")
         return self.schedule_launcher_replace(downloaded_launcher)
 
@@ -499,14 +663,15 @@ class SnakeLauncher(ctk.CTk):
         return remote_version
 
     def ejecutar_juego(self):
-        if not os.path.exists(GAME_EXECUTABLE_PATH):
+        command, working_dir, runtime_kind = self.get_runtime_game_entry()
+        if not command:
             self.set_status(
                 chip_text="Error",
                 chip_color=ERROR,
                 title="Error fatal",
-                detail="Snake.exe no encontrado.",
+                detail="No se encontro una instalacion valida del juego.",
             )
-            self.show_toast("Error de arranque", "No se encontro Snake.exe.", ERROR)
+            self.show_toast("Error de arranque", "No se encontro una copia ejecutable del juego.", ERROR)
             return
 
         self.set_status(
@@ -516,13 +681,17 @@ class SnakeLauncher(ctk.CTk):
             detail="Abriendo juego...",
         )
         self.set_progress(1, "determinate", "Inicio completado")
-        self.show_toast("Inicio del juego", f"Abriendo {GAME_NAME}.", ACCENT_ALT)
-        subprocess.Popen([GAME_EXECUTABLE_PATH], cwd=GAME_INSTALL_DIR)
+        if runtime_kind == "python":
+            self.show_toast("Inicio del juego", f"Abriendo {GAME_NAME} en modo desarrollo.", ACCENT_ALT)
+        else:
+            self.show_toast("Inicio del juego", f"Abriendo {GAME_NAME}.", ACCENT_ALT)
+        subprocess.Popen(command, cwd=working_dir)
         self.after(1200, self.destroy)
 
     def proceso_principal(self):
         self.ensure_install_layout()
         self.seed_launcher_from_local_build()
+        self.seed_game_from_local_build()
         if self.ensure_local_launcher_copy():
             return
         self.ensure_desktop_shortcut()
@@ -545,7 +714,8 @@ class SnakeLauncher(ctk.CTk):
                 manifest = None
 
         if manifest is None:
-            if os.path.exists(GAME_EXECUTABLE_PATH):
+            runtime_command, _, _ = self.get_runtime_game_entry()
+            if runtime_command:
                 local_version = read_text_file(GAME_VERSION_PATH, "desconocida")
                 self.set_versions(game_text=f"Juego instalado: {local_version}", launcher_text=f"Lanzador: {LAUNCHER_VERSION}")
                 self.set_status(
@@ -590,7 +760,8 @@ class SnakeLauncher(ctk.CTk):
             state["last_check_ok"] = True
             self.save_launcher_state(state)
         except Exception as exc:
-            if not os.path.exists(GAME_EXECUTABLE_PATH):
+            runtime_command, _, _ = self.get_runtime_game_entry()
+            if not runtime_command:
                 self.set_status(
                     chip_text="Error",
                     chip_color=ERROR,

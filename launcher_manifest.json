@@ -1,10 +1,29 @@
 {
-  "game": "Drift or Die",
-  "version": "1.0.0",
-  "notes": [
-    "Launcher renovado con instalacion local automatica.",
-    "Detecta .exe empaquetado o usa main.py con Python.",
-    "Incluye reparacion de instalacion y acceso rapido a la carpeta del juego.",
-    "Estado del sistema y versiones visibles dentro del launcher."
-  ]
+  "game": {
+    "name": "Drift or Die",
+    "version": "1.0.0",
+    "url": "https://github.com/BluePandaOpn/Drift-or-Die/raw/main/bin/Drift%20or%20Die.exe",
+    "notes": [
+      "Launcher renovado con instalacion local automatica.",
+      "Detecta ejecutable local o arranca en modo desarrollo con main.py.",
+      "Corrige la instalacion del juego con el nombre real del binario."
+    ]
+  },
+  "launcher": {
+    "name": "Drift Or Die Hub",
+    "version": "1.2.0",
+    "url": "https://github.com/BluePandaOpn/Drift-or-Die/raw/main/Launcher/DriftOrDieLauncher.exe",
+    "notes": [
+      "Compatibilidad con formato antiguo y nuevo del manifiesto.",
+      "Acceso directo y copia local del launcher mejorados."
+    ]
+  },
+  "assets": {
+    "logo": "assets/logo.png",
+    "demo_images": [
+      "assets/demo/demo-01.png",
+      "assets/demo/demo-02.png",
+      "assets/demo/demo-03.png"
+    ]
+  }
 }
