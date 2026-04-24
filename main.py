@@ -1,16 +1,16 @@
-import pygame
 import math
-import sys
 import random
+import sys
+
+import pygame
 
 # --- CONFIGURACION CONSTANTE ---
 WIDTH, HEIGHT = 1200, 800
-WORLD_SIZE = 5000
 FPS = 60
 
 # Colores
 COLOR_BG = (240, 240, 240)
-COLOR_SKID = (35, 35, 35)
+COLOR_GRID = (220, 220, 220)
 COLOR_CAR = (30, 30, 200)
 COLOR_AI = (220, 40, 40)
 COLOR_AI_BUFF = (255, 100, 0)
@@ -19,11 +19,56 @@ COLOR_NITRO = (0, 191, 255)
 COLOR_COLLECTIBLE = (255, 215, 0)
 COLOR_HEALTH = (50, 200, 50)
 
+GRID_SIZE = 200
+PARTICLE_CULL_MARGIN = 30
+CAR_CULL_MARGIN = 120
+UPGRADE_CULL_MARGIN = 40
+SKID_CULL_MARGIN = 30
+SKID_LIFE = 220
+UPGRADE_TARGET_COUNT = 24
+UPGRADE_KEEP_RADIUS = 1500
+UPGRADE_SPAWN_RADIUS_MIN = 450
+UPGRADE_SPAWN_RADIUS_MAX = 1250
+AI_SPAWN_RADIUS_MIN = 350
+AI_SPAWN_RADIUS_MAX = 900
+
+
+def world_to_screen(x, y, cam_x, cam_y):
+    return x - cam_x + WIDTH / 2, y - cam_y + HEIGHT / 2
+
+
+def is_visible(screen_x, screen_y, margin=0):
+    return -margin <= screen_x <= WIDTH + margin and -margin <= screen_y <= HEIGHT + margin
+
+
+def random_point_around(origin_x, origin_y, min_radius, max_radius, bias_x=0.0, bias_y=0.0):
+    bias_len = math.hypot(bias_x, bias_y)
+    if bias_len > 0.001:
+        base_angle = math.atan2(bias_y, bias_x)
+        angle = base_angle + random.uniform(-math.pi / 2.8, math.pi / 2.8)
+    else:
+        angle = random.uniform(0, math.tau)
+    radius = random.uniform(min_radius, max_radius)
+    return (
+        origin_x + math.cos(angle) * radius,
+        origin_y + math.sin(angle) * radius,
+    )
+
+
+def draw_infinite_grid(surface, cam_x, cam_y, grid_size=GRID_SIZE):
+    start_x = -(cam_x % grid_size)
+    start_y = -(cam_y % grid_size)
+
+    for x in range(int(start_x), WIDTH + grid_size, grid_size):
+        pygame.draw.line(surface, COLOR_GRID, (x, 0), (x, HEIGHT))
+    for y in range(int(start_y), HEIGHT + grid_size, grid_size):
+        pygame.draw.line(surface, COLOR_GRID, (0, y), (WIDTH, y))
+
 
 class Particle:
     def __init__(self, x, y, color=(200, 200, 200), life=255, size=None):
-        self.x = x
-        self.y = y
+        self.x = float(x)
+        self.y = float(y)
         self.size = size if size else random.randint(3, 6)
         self.life = life
         self.vel_x = random.uniform(-0.8, 0.8)
@@ -37,37 +82,67 @@ class Particle:
         return self.life > 0
 
 
+class SkidMark:
+    def __init__(self, x, y, angle, life=SKID_LIFE, alpha=110):
+        self.x = float(x)
+        self.y = float(y)
+        self.angle = float(angle)
+        self.life = life
+        self.alpha = alpha
+
+    def update(self):
+        self.life -= 1
+        return self.life > 0
+
+    def draw(self, surface, cam_x, cam_y):
+        screen_x, screen_y = world_to_screen(self.x, self.y, cam_x, cam_y)
+        if not is_visible(screen_x, screen_y, SKID_CULL_MARGIN):
+            return
+
+        fade = max(0.0, self.life / SKID_LIFE)
+        skid_bit = pygame.Surface((8, 6), pygame.SRCALPHA)
+        pygame.draw.rect(skid_bit, (20, 20, 20, int(self.alpha * fade)), (0, 0, 8, 6))
+        skid_bit = pygame.transform.rotate(skid_bit, self.angle)
+        rect = skid_bit.get_rect(center=(screen_x, screen_y))
+        surface.blit(skid_bit, rect)
+
+
 class Upgrade:
+    label_font = None
+
     def __init__(self, x, y):
-        self.x = x
-        self.y = y
+        self.x = float(x)
+        self.y = float(y)
         self.type = random.choice(["speed", "drift", "nitro", "accel"])
-        self.angle = 0
+        self.angle = 0.0
         self.color = COLOR_NITRO if self.type == "nitro" else COLOR_COLLECTIBLE
 
     def draw(self, surface, cam_x, cam_y):
         self.angle += 0.08
         float_y = math.sin(self.angle) * 8
-        pos = (int(self.x - cam_x + WIDTH // 2), int(self.y + float_y - cam_y + HEIGHT // 2))
+        screen_x, screen_y = world_to_screen(self.x, self.y + float_y, cam_x, cam_y)
+        if not is_visible(screen_x, screen_y, UPGRADE_CULL_MARGIN):
+            return
 
+        pos = (int(screen_x), int(screen_y))
         glow_size = 15 + math.sin(self.angle) * 5
         pygame.draw.circle(surface, (*self.color, 80), pos, glow_size)
         pygame.draw.circle(surface, self.color, pos, 12)
 
-        font = pygame.font.SysFont("Arial", 14, bold=True)
-        char = self.type[0].upper()
-        label = font.render(char, True, (255, 255, 255))
+        if Upgrade.label_font is None:
+            Upgrade.label_font = pygame.font.SysFont("Arial", 14, bold=True)
+        label = Upgrade.label_font.render(self.type[0].upper(), True, (255, 255, 255))
         surface.blit(label, (pos[0] - 5, pos[1] - 8))
 
 
 class Car:
     def __init__(self, x, y, color=COLOR_CAR, is_ai=False):
-        self.x = x
-        self.y = y
+        self.x = float(x)
+        self.y = float(y)
         self.color = color
         self.is_ai = is_ai
-        self.angle = random.randint(0, 360)
-        self.speed = 0
+        self.angle = float(random.randint(0, 360))
+        self.speed = 0.0
 
         # Atributos base
         self.base_max_speed = 10.0 if is_ai else 14.0
@@ -85,8 +160,8 @@ class Car:
         self.nitro_level = 50
         self.nitro_power = 0.6
 
-        self.dir_x = 0
-        self.dir_y = 0
+        self.dir_x = 0.0
+        self.dir_y = 0.0
         self.is_braking = False
         self.is_nitro_active = False
         self.particles = []
@@ -136,7 +211,7 @@ class Car:
             return True
         return False
 
-    def update(self, keys_or_target, skid_surface):
+    def update(self, keys_or_target, skid_marks):
         input_fwd = False
         input_back = False
         input_left = False
@@ -215,42 +290,52 @@ class Car:
 
         drift_val = math.hypot(target_dx - self.dir_x, target_dy - self.dir_y)
         if (drift_val > 1.2 or self.is_braking) and abs(self.speed) > 3:
-            self.draw_skids(skid_surface, drift_val)
+            self.add_skids(skid_marks, drift_val)
 
         self.x += self.dir_x
         self.y += self.dir_y
         self.particles = [p for p in self.particles if p.update()]
 
-    def draw_skids(self, surface, drift):
+    def add_skids(self, skid_marks, drift):
         rad = math.radians(self.angle + 90)
         dist_back = 18
         offset = 12
         alpha = min(110, int(drift * 20))
-        for side in [-1, 1]:
+        for side in (-1, 1):
             sx = self.x - math.cos(math.radians(self.angle)) * dist_back + math.cos(rad) * (offset * side)
             sy = self.y + math.sin(math.radians(self.angle)) * dist_back - math.sin(rad) * (offset * side)
-            skid_bit = pygame.Surface((8, 6), pygame.SRCALPHA)
-            pygame.draw.rect(skid_bit, (20, 20, 20, alpha), (0, 0, 8, 6))
-            skid_bit = pygame.transform.rotate(skid_bit, self.angle)
-            surface.blit(skid_bit, (int(sx), int(sy)))
+            skid_marks.append(SkidMark(sx, sy, self.angle, alpha=alpha))
 
     def draw(self, surface, cam_x, cam_y):
         for p in self.particles:
+            screen_x, screen_y = world_to_screen(p.x, p.y, cam_x, cam_y)
+            if not is_visible(screen_x, screen_y, PARTICLE_CULL_MARGIN):
+                continue
             pygame.draw.circle(
                 surface,
                 (*p.color, p.life // 2),
-                (int(p.x - cam_x + WIDTH // 2), int(p.y - cam_y + HEIGHT // 2)),
+                (int(screen_x), int(screen_y)),
                 int(p.size),
             )
 
+        screen_x, screen_y = world_to_screen(self.x, self.y, cam_x, cam_y)
+        if not is_visible(screen_x, screen_y, CAR_CULL_MARGIN):
+            return
+
         car_w, car_h = 56, 32
+
+        shadow_surf = pygame.Surface((car_w, car_h), pygame.SRCALPHA)
+        pygame.draw.rect(shadow_surf, (0, 0, 0, 80), (0, 0, car_w, car_h), border_radius=8)
+        rotated_shadow = pygame.transform.rotate(shadow_surf, self.angle)
+        shadow_rect = rotated_shadow.get_rect(center=(screen_x + 8, screen_y + 8))
+        surface.blit(rotated_shadow, shadow_rect)
+
         car_surf = pygame.Surface((car_w, car_h), pygame.SRCALPHA)
-        pygame.draw.rect(car_surf, (0, 0, 0, 60), (0, 0, car_w, car_h), border_radius=8)
         pygame.draw.rect(car_surf, self.color, (2, 2, car_w - 4, car_h - 4), border_radius=6)
         pygame.draw.rect(car_surf, (30, 30, 45), (16, 6, 22, car_h - 12), border_radius=4)
 
         rotated = pygame.transform.rotate(car_surf, self.angle)
-        rect = rotated.get_rect(center=(self.x - cam_x + WIDTH // 2, self.y - cam_y + HEIGHT // 2))
+        rect = rotated.get_rect(center=(screen_x, screen_y))
         surface.blit(rotated, rect)
 
 
@@ -279,14 +364,15 @@ class Game:
         self.reset_game()
 
     def reset_game(self):
-        self.player = Car(WORLD_SIZE // 2, WORLD_SIZE // 2)
+        self.player = Car(0.0, 0.0)
         self.cam_x, self.cam_y = self.player.x, self.player.y
-        self.ais = [Car(random.randint(1000, 4000), random.randint(1000, 4000), COLOR_AI, True) for _ in range(10)]
-        self.upgrades = [Upgrade(random.randint(500, 4500), random.randint(500, 4500)) for _ in range(30)]
-        self.skid_layer = pygame.Surface((WORLD_SIZE, WORLD_SIZE), pygame.SRCALPHA)
+        self.ais = [Car(*random_point_around(self.player.x, self.player.y, AI_SPAWN_RADIUS_MIN, AI_SPAWN_RADIUS_MAX), COLOR_AI, True) for _ in range(10)]
+        self.upgrades = []
+        self.skid_marks = []
         self.score = 0
         self.buff_event_timer = 0
         self.invul_timer = 0
+        self.maintain_upgrade_density(force_full=True)
 
     def draw_main_menu(self):
         self.screen.fill((30, 30, 40))
@@ -357,6 +443,32 @@ class Game:
         self.screen.blit(line2, (WIDTH // 2 - line2.get_width() // 2, 350))
         self.screen.blit(line3, (WIDTH // 2 - line3.get_width() // 2, 430))
 
+    def spawn_upgrade(self):
+        bias_x = self.player.dir_x if abs(self.player.dir_x) > 0.05 else math.cos(math.radians(self.player.angle))
+        bias_y = self.player.dir_y if abs(self.player.dir_y) > 0.05 else -math.sin(math.radians(self.player.angle))
+        x, y = random_point_around(
+            self.player.x,
+            self.player.y,
+            UPGRADE_SPAWN_RADIUS_MIN,
+            UPGRADE_SPAWN_RADIUS_MAX,
+            bias_x,
+            bias_y,
+        )
+        self.upgrades.append(Upgrade(x, y))
+
+    def maintain_upgrade_density(self, force_full=False):
+        if force_full:
+            self.upgrades.clear()
+
+        self.upgrades = [
+            upgrade
+            for upgrade in self.upgrades
+            if math.hypot(upgrade.x - self.cam_x, upgrade.y - self.cam_y) <= UPGRADE_KEEP_RADIUS
+        ]
+
+        while len(self.upgrades) < UPGRADE_TARGET_COUNT:
+            self.spawn_upgrade()
+
     def run(self):
         while True:
             self.clock.tick(FPS)
@@ -404,12 +516,15 @@ class Game:
             buffed_ai.max_speed += 7
             buffed_ai.rotation_speed += 2.5
 
-        self.player.update(keys, self.skid_layer)
+        self.player.update(keys, self.skid_marks)
         for ai in self.ais:
-            ai.update(self.player, self.skid_layer)
+            ai.update(self.player, self.skid_marks)
 
         self.cam_x += (self.player.x - self.cam_x) * 0.12
         self.cam_y += (self.player.y - self.cam_y) * 0.12
+
+        self.skid_marks = [mark for mark in self.skid_marks if mark.update()]
+        self.maintain_upgrade_density()
 
         # Colisiones Mejoras
         for u in self.upgrades[:]:
@@ -417,8 +532,6 @@ class Game:
                 self.player.apply_upgrade(u.type)
                 self.upgrades.remove(u)
                 self.score += 500
-                if len(self.upgrades) < 20:
-                    self.upgrades.append(Upgrade(random.randint(500, 4500), random.randint(500, 4500)))
 
         # Colisiones IA
         if self.invul_timer > 0:
@@ -435,22 +548,10 @@ class Game:
 
     def draw_game(self):
         self.screen.fill(COLOR_BG)
+        draw_infinite_grid(self.screen, self.cam_x, self.cam_y)
 
-        # Grid
-        grid = 200
-        off_x = int(self.cam_x - WIDTH // 2) % grid
-        off_y = int(self.cam_y - HEIGHT // 2) % grid
-        for x in range(-off_x, WIDTH + grid, grid):
-            pygame.draw.line(self.screen, (220, 220, 220), (x, 0), (x, HEIGHT))
-        for y in range(-off_y, HEIGHT + grid, grid):
-            pygame.draw.line(self.screen, (220, 220, 220), (0, y), (WIDTH, y))
-
-        # Huellas
-        view_rect = pygame.Rect(self.cam_x - WIDTH // 2, self.cam_y - HEIGHT // 2, WIDTH, HEIGHT)
-        view_rect = view_rect.clip(pygame.Rect(0, 0, WORLD_SIZE, WORLD_SIZE))
-        if view_rect.width > 0:
-            self.screen.blit(self.skid_layer.subsurface(view_rect), (0, 0))
-
+        for mark in self.skid_marks:
+            mark.draw(self.screen, self.cam_x, self.cam_y)
         for u in self.upgrades:
             u.draw(self.screen, self.cam_x, self.cam_y)
         for ai in self.ais:
