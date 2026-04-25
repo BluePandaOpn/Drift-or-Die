@@ -4,8 +4,10 @@ import os
 import random
 import sys
 import threading
+import traceback
 import urllib.error
 import urllib.request
+from datetime import datetime
 
 import pygame
 
@@ -69,6 +71,32 @@ LOCAL_ASSETS_DIR = os.path.join(RUNTIME_ROOT, "assets")
 LOCAL_MUSIC_DIR = os.path.join(LOCAL_ASSETS_DIR, "music")
 LOCAL_MUSIC_MANIFEST_PATH = os.path.join(RUNTIME_ROOT, "music_manifest.json")
 MUSIC_CACHE_METADATA_PATH = os.path.join(LOCAL_MUSIC_DIR, "music_cache.json")
+GAME_RUNTIME_LOG_PATH = os.path.join(RUNTIME_ROOT, "game_runtime_log.txt")
+
+BUILTIN_MUSIC_MANIFEST = {
+    "version": "1.3.0",
+    "background_volume": DEFAULT_MUSIC_VOLUME,
+    "tracks": {
+        "background": {
+            "filename": "Musica.mp3",
+            "url": f"{RAW_BASE_URL}/assets/music/Musica.mp3",
+        },
+        "accelerate": {
+            "filename": "accelerate.wav",
+            "url": f"{RAW_BASE_URL}/assets/music/accelerate.wav",
+        },
+        "nitro": {
+            "filename": "nitro.wav",
+            "url": f"{RAW_BASE_URL}/assets/music/nitro.wav",
+        },
+        "click": {
+            "filename": "clic.mp3",
+            "url": f"{RAW_BASE_URL}/assets/music/clic.mp3",
+        },
+    },
+}
+
+_LOG_LOCK = threading.Lock()
 
 
 def world_to_screen(x, y, cam_x, cam_y):
@@ -108,28 +136,71 @@ def ensure_directory(path):
     return path
 
 
-def safe_json_load(path, default_value):
+def runtime_log(scope, message, error=None):
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    line = f"[{timestamp}] [{scope}] {message}"
+    print(line, flush=True)
+    try:
+        ensure_directory(os.path.dirname(GAME_RUNTIME_LOG_PATH))
+        with _LOG_LOCK:
+            with open(GAME_RUNTIME_LOG_PATH, "a", encoding="utf-8") as file_obj:
+                file_obj.write(line + "\n")
+                if error is not None:
+                    file_obj.write(f"{error}\n")
+    except OSError:
+        pass
+
+
+def initialize_runtime_logging():
+    runtime_log("runtime", f"inicio de ejecucion. cwd={os.getcwd()} runtime_root={RUNTIME_ROOT}")
+    runtime_log("runtime", f"log persistente: {GAME_RUNTIME_LOG_PATH}")
+    runtime_log("runtime", f"python={sys.version.split()[0]} frozen={getattr(sys, 'frozen', False)}")
+
+
+def install_runtime_exception_hooks():
+    def handle_exception(exc_type, exc_value, exc_traceback):
+        stack = "".join(traceback.format_exception(exc_type, exc_value, exc_traceback))
+        runtime_log("crash", f"excepcion no controlada: {exc_value}", error=stack)
+        sys.__excepthook__(exc_type, exc_value, exc_traceback)
+
+    def handle_thread_exception(args):
+        stack = "".join(traceback.format_exception(args.exc_type, args.exc_value, args.exc_traceback))
+        runtime_log("thread-crash", f"hilo={args.thread.name} excepcion={args.exc_value}", error=stack)
+
+    sys.excepthook = handle_exception
+    threading.excepthook = handle_thread_exception
+
+
+def safe_json_load(path, default_value, label="json"):
     try:
         with open(path, "r", encoding="utf-8") as file_obj:
-            return json.load(file_obj)
-    except (OSError, ValueError, TypeError):
+            payload = json.load(file_obj)
+            runtime_log(label, f"json cargado correctamente desde {path}")
+            return payload
+    except (OSError, ValueError, TypeError) as exc:
+        runtime_log(label, f"fallo cargando json desde {path}: {exc}")
         return default_value
 
 
-def safe_json_dump(path, payload):
+def safe_json_dump(path, payload, label="json"):
     try:
         ensure_directory(os.path.dirname(path))
         with open(path, "w", encoding="utf-8") as file_obj:
             json.dump(payload, file_obj, indent=2)
+        runtime_log(label, f"json guardado correctamente en {path}")
         return True
-    except OSError:
+    except OSError as exc:
+        runtime_log(label, f"fallo guardando json en {path}: {exc}")
         return False
 
 
 def download_bytes(url, timeout=8):
     request = urllib.request.Request(url, headers={"User-Agent": f"{GAME_TITLE}/music-loader"})
+    runtime_log("network", f"descargando bytes desde {url}")
     with urllib.request.urlopen(request, timeout=timeout) as response:
-        return response.read()
+        payload = response.read()
+    runtime_log("network", f"descarga completada desde {url} ({len(payload)} bytes)")
+    return payload
 
 
 class AudioManager:
@@ -153,7 +224,7 @@ class AudioManager:
         self.drift_release_counter = 0
 
     def _log(self, message):
-        print(f"[manager_music] {message}", flush=True)
+        runtime_log("manager_music", message)
 
     def start(self):
         if self.thread and self.thread.is_alive():
@@ -178,7 +249,7 @@ class AudioManager:
                 self._log("manifiesto sin pistas disponibles")
                 return
 
-            cache = safe_json_load(MUSIC_CACHE_METADATA_PATH, {})
+            cache = safe_json_load(MUSIC_CACHE_METADATA_PATH, {}, label="music-cache")
             self._log(f"cache cargada desde: {MUSIC_CACHE_METADATA_PATH}")
             resolved_assets = self._ensure_assets(tracks, manifest.get("version", "0.0.0"), cache)
             self.asset_map = resolved_assets
@@ -189,11 +260,12 @@ class AudioManager:
             self.ready = any(os.path.isfile(path) for path in resolved_assets.values())
             self.status = "ready" if self.ready else "no-audio-files"
             self._log(f"bootstrap completado. estado={self.status}, assets={list(resolved_assets.keys())}")
-        except Exception:
+        except Exception as exc:
             self.failed = True
             if not self.ready:
                 self.status = "disabled"
-            self._log("error inesperado durante el bootstrap del audio")
+            self._log(f"error inesperado durante el bootstrap del audio: {exc}")
+            self._log(traceback.format_exc())
 
     def _init_mixer(self):
         try:
@@ -208,10 +280,10 @@ class AudioManager:
             self.enabled = True
             self._log("mixer inicializado y canales reservados")
             return True
-        except pygame.error:
+        except pygame.error as exc:
             self.failed = True
             self.status = "mixer-error"
-            self._log("fallo al inicializar pygame.mixer")
+            self._log(f"fallo al inicializar pygame.mixer: {exc}")
             return False
 
     def _load_manifest(self):
@@ -220,22 +292,40 @@ class AudioManager:
         if manifest:
             self._log("manifiesto remoto cargado correctamente")
             return manifest
-        self._log(f"fallo remoto. usando manifiesto local: {LOCAL_MUSIC_MANIFEST_PATH}")
-        local_manifest = safe_json_load(LOCAL_MUSIC_MANIFEST_PATH, {})
-        return local_manifest if isinstance(local_manifest, dict) else {}
+        self._log("fallo remoto. buscando manifiesto local")
+        for candidate in self._get_manifest_candidate_paths():
+            local_manifest = safe_json_load(candidate, {}, label="music-manifest")
+            if isinstance(local_manifest, dict) and local_manifest.get("tracks"):
+                self._log(f"manifiesto local cargado desde: {candidate}")
+                return local_manifest
+        self._log("sin manifiesto remoto ni local valido. usando manifiesto interno")
+        return BUILTIN_MUSIC_MANIFEST
 
     def _fetch_remote_manifest(self):
         try:
             payload = download_bytes(MUSIC_MANIFEST_URL, timeout=8)
             manifest = json.loads(payload.decode("utf-8"))
-        except (urllib.error.URLError, TimeoutError, ValueError, OSError):
-            self._log("no se pudo descargar o parsear el manifiesto remoto")
+        except (urllib.error.URLError, TimeoutError, ValueError, OSError) as exc:
+            self._log(f"no se pudo descargar o parsear el manifiesto remoto: {exc}")
             return None
 
         if not isinstance(manifest, dict):
             self._log("el manifiesto remoto no tiene formato valido")
             return None
         return manifest
+
+    def _get_manifest_candidate_paths(self):
+        candidates = []
+        for candidate in (
+            LOCAL_MUSIC_MANIFEST_PATH,
+            os.path.join(os.getcwd(), "music_manifest.json"),
+            os.path.join(RUNTIME_ROOT, "assets", "music_manifest.json"),
+            os.path.join(os.getcwd(), "assets", "music_manifest.json"),
+        ):
+            if candidate not in candidates:
+                candidates.append(candidate)
+        self._log(f"rutas de manifiesto local evaluadas: {candidates}")
+        return candidates
 
     def _read_float(self, value, default_value):
         try:
@@ -342,8 +432,8 @@ class AudioManager:
                     os.replace(temp_path, target_path)
                     existing_path = target_path
                     self._log(f"descarga completada para {track_name}: {target_path}")
-                except (urllib.error.URLError, TimeoutError, OSError):
-                    self._log(f"fallo la descarga de {track_name}. se intentara usar copia local si existe")
+                except (urllib.error.URLError, TimeoutError, OSError) as exc:
+                    self._log(f"fallo la descarga de {track_name}: {exc}. se intentara usar copia local si existe")
                     pass
 
             if existing_path and os.path.isfile(existing_path):
@@ -362,6 +452,7 @@ class AudioManager:
                     if isinstance(track_info, dict)
                 },
             },
+            label="music-cache",
         )
         self._log(f"cache de audio actualizada en: {MUSIC_CACHE_METADATA_PATH}")
         return resolved_assets
@@ -420,9 +511,9 @@ class AudioManager:
                     setattr(self, attr_name, pygame.mixer.Sound(candidate_path))
                     self._log(f"efecto cargado: {effect_key} <- {candidate_path}")
                     break
-                except pygame.error:
+                except pygame.error as exc:
                     self.failed = True
-                    self._log(f"fallo al cargar efecto: {effect_key} archivo={candidate_path}")
+                    self._log(f"fallo al cargar efecto: {effect_key} archivo={candidate_path} error={exc}")
 
         if not any((self.engine_sound, self.drift_sound, self.nitro_sound, self.click_sound)):
             self.status = "playback-error"
@@ -440,10 +531,10 @@ class AudioManager:
             pygame.mixer.music.set_volume(self.background_volume)
             pygame.mixer.music.play(-1)
             self._log("musica de fondo activa en loop")
-        except pygame.error:
+        except pygame.error as exc:
             self.failed = True
             self.status = "background-error"
-            self._log("fallo al reproducir la musica de fondo")
+            self._log(f"fallo al reproducir la musica de fondo: {exc}")
 
     def update_vehicle_audio(self, player):
         if not self.enabled or not player or not pygame.mixer.get_init():
@@ -492,9 +583,9 @@ class AudioManager:
                 if channel.get_busy():
                     channel.stop()
                     self._log(f"canal={channel_name} detenido por parada de gameplay")
-            except pygame.error:
+            except pygame.error as exc:
                 self.failed = True
-                self._log(f"error al detener gameplay en canal={channel_name}")
+                self._log(f"error al detener gameplay en canal={channel_name}: {exc}")
             self.channel_states[channel_name] = (False, 0.0)
         self.drift_release_counter = 0
 
@@ -506,9 +597,9 @@ class AudioManager:
                 self.ui_channel.stop()
             self.ui_channel.play(self.click_sound)
             self._log("ui click reproducido")
-        except pygame.error:
+        except pygame.error as exc:
             self.failed = True
-            self._log("error reproduciendo ui click")
+            self._log(f"error reproduciendo ui click: {exc}")
 
     def _update_loop_channel(self, channel_name, channel, sound, should_play, volume):
         if channel is None or sound is None:
@@ -533,9 +624,9 @@ class AudioManager:
             elif channel.get_busy():
                 channel.stop()
                 self._log(f"canal={channel_name} detenido")
-        except pygame.error:
+        except pygame.error as exc:
             self.failed = True
-            self._log(f"error de reproduccion en canal={channel_name}")
+            self._log(f"error de reproduccion en canal={channel_name}: {exc}")
 
     def stop(self):
         if not pygame.mixer.get_init():
@@ -547,8 +638,8 @@ class AudioManager:
                     channel.stop()
             pygame.mixer.music.stop()
             self._log("audio detenido")
-        except pygame.error:
-            self._log("fallo al detener el audio")
+        except pygame.error as exc:
+            self._log(f"fallo al detener el audio: {exc}")
 
 
 class Particle:
@@ -913,6 +1004,7 @@ class Car:
 
 class Game:
     def __init__(self):
+        runtime_log("game", "inicializando pygame")
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF)
         pygame.display.set_caption(GAME_TITLE)
@@ -923,6 +1015,7 @@ class Game:
         self.font_small = pygame.font.SysFont("Arial", 22)
         self.music = AudioManager()
         self.music.start()
+        runtime_log("game", "audio manager arrancado")
 
         self.state = "MENU_MAIN"
         self.main_menu_buttons = [
@@ -942,6 +1035,7 @@ class Game:
         self.selected_class = 0
         self.mouse_click_latch = False
         self.reset_game()
+        runtime_log("game", "game inicializado correctamente")
 
     def reset_game(self):
         self.player = Car(0.0, 0.0)
@@ -953,6 +1047,7 @@ class Game:
         self.buff_event_timer = 0
         self.invul_timer = 0
         self.maintain_upgrade_density(force_full=True)
+        runtime_log("game", "estado de partida reiniciado")
 
     def start_game(self, class_index=None):
         if class_index is not None:
@@ -960,6 +1055,7 @@ class Game:
         self.reset_game()
         self.player.setup_class(self.selected_class)
         self.state = "PLAYING"
+        runtime_log("game", f"partida iniciada con clase={self.selected_class}")
 
     def handle_game_over_action(self, action):
         self.music.play_ui_click()
@@ -1124,43 +1220,49 @@ class Game:
             self.spawn_upgrade()
 
     def run(self):
-        while True:
-            self.clock.tick(FPS)
+        runtime_log("game", "bucle principal iniciado")
+        try:
+            while True:
+                self.clock.tick(FPS)
 
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    self.music.stop()
-                    pygame.quit()
-                    sys.exit()
-                if event.type == pygame.KEYDOWN:
-                    if event.key == pygame.K_ESCAPE:
-                        if self.state in ("MENU_PLAY", "OPTIONS"):
-                            self.state = "MENU_MAIN"
-                        elif self.state == "PLAYING":
-                            self.state = "MENU_MAIN"
-                            self.reset_game()
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        runtime_log("game", "evento quit recibido")
+                        self.music.stop()
+                        pygame.quit()
+                        sys.exit()
+                    if event.type == pygame.KEYDOWN:
+                        if event.key == pygame.K_ESCAPE:
+                            if self.state in ("MENU_PLAY", "OPTIONS"):
+                                self.state = "MENU_MAIN"
+                            elif self.state == "PLAYING":
+                                self.state = "MENU_MAIN"
+                                self.reset_game()
+                            elif self.state == "GAME_OVER":
+                                self.handle_game_over_action("menu")
                         elif self.state == "GAME_OVER":
-                            self.handle_game_over_action("menu")
-                    elif self.state == "GAME_OVER":
-                        if event.key in (pygame.K_r, pygame.K_RETURN, pygame.K_SPACE):
-                            self.handle_game_over_action("restart")
-                        elif event.key in (pygame.K_m, pygame.K_ESCAPE):
-                            self.handle_game_over_action("menu")
+                            if event.key in (pygame.K_r, pygame.K_RETURN, pygame.K_SPACE):
+                                self.handle_game_over_action("restart")
+                            elif event.key in (pygame.K_m, pygame.K_ESCAPE):
+                                self.handle_game_over_action("menu")
 
-            if self.state == "MENU_MAIN":
-                self.draw_main_menu()
-            elif self.state == "MENU_PLAY":
-                self.draw_play_menu()
-            elif self.state == "OPTIONS":
-                self.draw_options_menu()
-            elif self.state == "PLAYING":
-                self.update_game()
-                self.draw_game()
-            elif self.state == "GAME_OVER":
-                self.draw_game()
-                self.draw_game_over()
+                if self.state == "MENU_MAIN":
+                    self.draw_main_menu()
+                elif self.state == "MENU_PLAY":
+                    self.draw_play_menu()
+                elif self.state == "OPTIONS":
+                    self.draw_options_menu()
+                elif self.state == "PLAYING":
+                    self.update_game()
+                    self.draw_game()
+                elif self.state == "GAME_OVER":
+                    self.draw_game()
+                    self.draw_game_over()
 
-            pygame.display.flip()
+                pygame.display.flip()
+        except Exception as exc:
+            runtime_log("game", f"error fatal en el bucle principal: {exc}", error=traceback.format_exc())
+            raise
 
     def update_game(self):
         keys = pygame.key.get_pressed()
@@ -1291,4 +1393,11 @@ class Game:
 
 
 if __name__ == "__main__":
-    Game().run()
+    initialize_runtime_logging()
+    install_runtime_exception_hooks()
+    runtime_log("runtime", "arrancando juego")
+    try:
+        Game().run()
+    finally:
+        runtime_log("runtime", "cerrando juego")
+        pygame.quit()
