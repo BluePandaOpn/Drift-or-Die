@@ -350,16 +350,6 @@ class AudioManager:
             self._log("ningun efecto pudo cargarse en memoria")
             return
 
-        if self.drift_channel is not None and self.drift_sound is not None:
-            try:
-                self.drift_channel.play(self.drift_sound, loops=-1)
-                self.drift_channel.set_volume(0.0)
-                self.channel_states["drift"] = (False, 0.0)
-                self._log("canal=drift precargado en loop continuo con volumen 0")
-            except pygame.error:
-                self.failed = True
-                self._log("fallo al precargar el loop continuo de drift")
-
     def _play_background(self):
         background_path = self.asset_map.get("background")
         if not background_path:
@@ -418,21 +408,18 @@ class AudioManager:
             clamped_volume = max(0.0, min(1.0, volume))
             target_volume = clamped_volume if should_play else 0.0
             previous = self.channel_states.get(channel_name)
+            was_playing = bool(previous[0]) if previous else False
             current = (bool(should_play), round(target_volume, 2))
             if previous != current:
                 self.channel_states[channel_name] = current
                 self._log(f"canal={channel_name} play={current[0]} volume={current[1]:.2f}")
-            if channel_name == "drift":
-                if not channel.get_busy():
-                    channel.play(sound, loops=-1)
-                    self._log("canal=drift reiniciado en loop continuo")
-                channel.set_volume(target_volume)
-                return
 
             if should_play:
-                if not channel.get_busy():
+                if not was_playing or not channel.get_busy():
+                    if channel.get_busy():
+                        channel.stop()
                     channel.play(sound, loops=-1)
-                    self._log(f"canal={channel_name} inicio de loop")
+                    self._log(f"canal={channel_name} reiniciado desde 0")
                 channel.set_volume(clamped_volume)
             elif channel.get_busy():
                 channel.stop()
