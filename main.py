@@ -1,12 +1,35 @@
+import json
 import math
+import os
 import random
 import sys
+import threading
+import urllib.error
+import urllib.request
 
 import pygame
 
 # --- CONFIGURACION CONSTANTE ---
 WIDTH, HEIGHT = 1200, 800
 FPS = 60
+GAME_TITLE = "Drift or Die"
+USER_PROFILE = os.path.expanduser("~")
+DOCUMENTS_DIR = os.path.join(USER_PROFILE, "Documents")
+USER_GAME_DIR = os.path.join(DOCUMENTS_DIR, "DriftOrDie")
+USER_MUSIC_DIR = os.path.join(USER_GAME_DIR, "assets", "music")
+RAW_BASE_URL = "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main"
+MUSIC_MANIFEST_URL = f"{RAW_BASE_URL}/music_manifest.json"
+LOCAL_MUSIC_MANIFEST_PATH = os.path.join(os.path.dirname(__file__), "music_manifest.json")
+MUSIC_CACHE_METADATA_PATH = os.path.join(USER_MUSIC_DIR, "music_cache.json")
+DEFAULT_MUSIC_VOLUME = 0.35
+ENGINE_BASE_VOLUME = 0.08
+ENGINE_SPEED_VOLUME = 0.35
+DRIFT_BASE_VOLUME = 0.12
+DRIFT_SPEED_VOLUME = 0.65
+NITRO_BASE_VOLUME = 0.18
+NITRO_SPEED_VOLUME = 0.45
+SUPPORTED_EFFECT_EXTENSIONS = (".wav", ".ogg", ".mp3", ".m4a")
+DRIFT_RELEASE_FRAMES = 6
 
 # Colores
 COLOR_BG = (240, 240, 240)
@@ -71,6 +94,365 @@ def draw_infinite_grid(surface, cam_x, cam_y, grid_size=GRID_SIZE):
         pygame.draw.line(surface, COLOR_GRID, (x, 0), (x, HEIGHT))
     for y in range(int(start_y), HEIGHT + grid_size, grid_size):
         pygame.draw.line(surface, COLOR_GRID, (0, y), (WIDTH, y))
+
+
+def ensure_directory(path):
+    os.makedirs(path, exist_ok=True)
+    return path
+
+
+def safe_json_load(path, default_value):
+    try:
+        with open(path, "r", encoding="utf-8") as file_obj:
+            return json.load(file_obj)
+    except (OSError, ValueError, TypeError):
+        return default_value
+
+
+def safe_json_dump(path, payload):
+    try:
+        ensure_directory(os.path.dirname(path))
+        with open(path, "w", encoding="utf-8") as file_obj:
+            json.dump(payload, file_obj, indent=2)
+        return True
+    except OSError:
+        return False
+
+
+def download_bytes(url, timeout=8):
+    request = urllib.request.Request(url, headers={"User-Agent": f"{GAME_TITLE}/music-loader"})
+    with urllib.request.urlopen(request, timeout=timeout) as response:
+        return response.read()
+
+
+class AudioManager:
+    def __init__(self):
+        self.enabled = False
+        self.ready = False
+        self.failed = False
+        self.thread = None
+        self.status = "disabled"
+        self.asset_map = {}
+        self.background_volume = DEFAULT_MUSIC_VOLUME
+        self.engine_channel = None
+        self.drift_channel = None
+        self.nitro_channel = None
+        self.engine_sound = None
+        self.drift_sound = None
+        self.nitro_sound = None
+        self.channel_states = {}
+        self.drift_release_counter = 0
+
+    def _log(self, message):
+        print(f"[manager_music] {message}", flush=True)
+
+    def start(self):
+        if self.thread and self.thread.is_alive():
+            self._log("inicio omitido: el hilo de audio ya esta activo")
+            return
+        self._log("iniciando sistema de audio")
+        self.thread = threading.Thread(target=self._bootstrap_audio, daemon=True)
+        self.thread.start()
+
+    def _bootstrap_audio(self):
+        try:
+            self._log(f"asegurando carpeta local de musica: {USER_MUSIC_DIR}")
+            ensure_directory(USER_MUSIC_DIR)
+            if not self._init_mixer():
+                return
+
+            manifest = self._load_manifest()
+            tracks = manifest.get("tracks", {})
+            if not tracks:
+                self.status = "manifest-empty"
+                self._log("manifiesto sin pistas disponibles")
+                return
+
+            cache = safe_json_load(MUSIC_CACHE_METADATA_PATH, {})
+            self._log(f"cache cargada desde: {MUSIC_CACHE_METADATA_PATH}")
+            resolved_assets = self._ensure_assets(tracks, manifest.get("version", "0.0.0"), cache)
+            self.asset_map = resolved_assets
+            self.background_volume = self._read_float(manifest.get("background_volume"), DEFAULT_MUSIC_VOLUME)
+            self._log(f"volumen de fondo configurado en: {self.background_volume:.2f}")
+            self._load_sound_objects()
+            self._play_background()
+            self.ready = any(os.path.isfile(path) for path in resolved_assets.values())
+            self.status = "ready" if self.ready else "no-audio-files"
+            self._log(f"bootstrap completado. estado={self.status}, assets={list(resolved_assets.keys())}")
+        except Exception:
+            self.failed = True
+            if not self.ready:
+                self.status = "disabled"
+            self._log("error inesperado durante el bootstrap del audio")
+
+    def _init_mixer(self):
+        try:
+            if not pygame.mixer.get_init():
+                self._log("inicializando pygame.mixer")
+                pygame.mixer.init()
+            pygame.mixer.set_num_channels(8)
+            self.engine_channel = pygame.mixer.Channel(1)
+            self.drift_channel = pygame.mixer.Channel(2)
+            self.nitro_channel = pygame.mixer.Channel(3)
+            self.enabled = True
+            self._log("mixer inicializado y canales reservados")
+            return True
+        except pygame.error:
+            self.failed = True
+            self.status = "mixer-error"
+            self._log("fallo al inicializar pygame.mixer")
+            return False
+
+    def _load_manifest(self):
+        self._log(f"intentando cargar manifiesto remoto: {MUSIC_MANIFEST_URL}")
+        manifest = self._fetch_remote_manifest()
+        if manifest:
+            self._log("manifiesto remoto cargado correctamente")
+            return manifest
+        self._log(f"fallo remoto. usando manifiesto local: {LOCAL_MUSIC_MANIFEST_PATH}")
+        local_manifest = safe_json_load(LOCAL_MUSIC_MANIFEST_PATH, {})
+        return local_manifest if isinstance(local_manifest, dict) else {}
+
+    def _fetch_remote_manifest(self):
+        try:
+            payload = download_bytes(MUSIC_MANIFEST_URL, timeout=8)
+            manifest = json.loads(payload.decode("utf-8"))
+        except (urllib.error.URLError, TimeoutError, ValueError, OSError):
+            self._log("no se pudo descargar o parsear el manifiesto remoto")
+            return None
+
+        if not isinstance(manifest, dict):
+            self._log("el manifiesto remoto no tiene formato valido")
+            return None
+        return manifest
+
+    def _read_float(self, value, default_value):
+        try:
+            return max(0.0, min(1.0, float(value)))
+        except (TypeError, ValueError):
+            return default_value
+
+    def _ensure_assets(self, tracks, version, cache):
+        resolved_assets = {}
+        cache_version = cache.get("version")
+        cache_tracks = cache.get("tracks", {})
+        self._log(f"sincronizando assets. version remota={version}, version cache={cache_version}")
+
+        for track_name, track_info in tracks.items():
+            if not isinstance(track_info, dict):
+                self._log(f"pista ignorada por formato invalido: {track_name}")
+                continue
+            url = track_info.get("url")
+            filename = os.path.basename(str(track_info.get("filename") or os.path.basename(str(url or ""))))
+            if not filename:
+                self._log(f"pista ignorada sin filename valido: {track_name}")
+                continue
+
+            target_path = os.path.join(USER_MUSIC_DIR, filename)
+            cached_track = cache_tracks.get(track_name, {})
+            needs_download = (
+                not os.path.isfile(target_path)
+                or cache_version != version
+                or cached_track.get("url") != url
+            )
+            self._log(
+                f"pista={track_name} archivo={filename} existe={os.path.isfile(target_path)} "
+                f"needs_download={needs_download}"
+            )
+
+            if needs_download and isinstance(url, str) and url.startswith(("http://", "https://")):
+                try:
+                    self._log(f"descargando pista {track_name} desde {url}")
+                    payload = download_bytes(url, timeout=15)
+                    temp_path = f"{target_path}.download"
+                    with open(temp_path, "wb") as file_obj:
+                        file_obj.write(payload)
+                    os.replace(temp_path, target_path)
+                    self._log(f"descarga completada para {track_name}: {target_path}")
+                except (urllib.error.URLError, TimeoutError, OSError):
+                    self._log(f"fallo la descarga de {track_name}. se intentara usar copia local si existe")
+                    pass
+
+            if os.path.isfile(target_path):
+                resolved_assets[track_name] = target_path
+                self._log(f"pista disponible para {track_name}: {target_path}")
+            else:
+                self._log(f"pista no disponible para {track_name}")
+
+        safe_json_dump(
+            MUSIC_CACHE_METADATA_PATH,
+            {
+                "version": version,
+                "tracks": {
+                    track_name: {"url": track_info.get("url"), "path": resolved_assets.get(track_name, "")}
+                    for track_name, track_info in tracks.items()
+                    if isinstance(track_info, dict)
+                },
+            },
+        )
+        self._log(f"cache de audio actualizada en: {MUSIC_CACHE_METADATA_PATH}")
+        return resolved_assets
+
+    def _resolve_effect_candidate_paths(self, effect_key):
+        asset_path = self.asset_map.get(effect_key)
+        if not asset_path:
+            return []
+
+        root_path, ext = os.path.splitext(asset_path)
+        candidates = []
+        preferred_extensions = (".wav", ".ogg", ".mp3", ".m4a")
+        if ext.lower() in preferred_extensions:
+            ordered_extensions = tuple(
+                candidate_ext for candidate_ext in preferred_extensions if candidate_ext != ext.lower()
+            ) + (ext.lower(),)
+            ordered_extensions = (".wav", ".ogg", ext.lower(), ".mp3", ".m4a")
+        else:
+            ordered_extensions = preferred_extensions + (ext.lower(),)
+
+        seen = set()
+        for candidate_ext in ordered_extensions:
+            candidate_path = root_path + candidate_ext
+            if candidate_path in seen:
+                continue
+            seen.add(candidate_path)
+            if os.path.isfile(candidate_path):
+                candidates.append(candidate_path)
+
+        if asset_path not in seen and os.path.isfile(asset_path):
+            candidates.append(asset_path)
+        return candidates
+
+    def _load_sound_objects(self):
+        effect_targets = (
+            ("accelerate", "engine_sound"),
+            ("drift", "drift_sound"),
+            ("nitro", "nitro_sound"),
+        )
+        self._log("cargando efectos en memoria con fallback de formatos")
+        for effect_key, attr_name in effect_targets:
+            setattr(self, attr_name, None)
+            candidate_paths = self._resolve_effect_candidate_paths(effect_key)
+            if not candidate_paths:
+                self._log(f"sin archivo disponible para efecto={effect_key}")
+                continue
+
+            for candidate_path in candidate_paths:
+                try:
+                    setattr(self, attr_name, pygame.mixer.Sound(candidate_path))
+                    self._log(f"efecto cargado: {effect_key} <- {candidate_path}")
+                    break
+                except pygame.error:
+                    self.failed = True
+                    self._log(f"fallo al cargar efecto: {effect_key} archivo={candidate_path}")
+
+        if not any((self.engine_sound, self.drift_sound, self.nitro_sound)):
+            self.status = "playback-error"
+            self._log("ningun efecto pudo cargarse en memoria")
+            return
+
+        if self.drift_channel is not None and self.drift_sound is not None:
+            try:
+                self.drift_channel.play(self.drift_sound, loops=-1)
+                self.drift_channel.set_volume(0.0)
+                self.channel_states["drift"] = (False, 0.0)
+                self._log("canal=drift precargado en loop continuo con volumen 0")
+            except pygame.error:
+                self.failed = True
+                self._log("fallo al precargar el loop continuo de drift")
+
+    def _play_background(self):
+        background_path = self.asset_map.get("background")
+        if not background_path:
+            self._log("no hay pista de fondo disponible")
+            return
+        try:
+            self._log(f"reproduciendo musica de fondo desde {background_path}")
+            pygame.mixer.music.load(background_path)
+            pygame.mixer.music.set_volume(self.background_volume)
+            pygame.mixer.music.play(-1)
+            self._log("musica de fondo activa en loop")
+        except pygame.error:
+            self.failed = True
+            self.status = "background-error"
+            self._log("fallo al reproducir la musica de fondo")
+
+    def update_vehicle_audio(self, player):
+        if not self.enabled or not player or not pygame.mixer.get_init():
+            return
+
+        speed_ratio = min(1.0, abs(player.speed) / max(1.0, player.max_speed))
+        is_accelerating = player.is_moving and not player.is_nitro_active
+        if player.is_drifting:
+            self.drift_release_counter = DRIFT_RELEASE_FRAMES
+        else:
+            self.drift_release_counter = max(0, self.drift_release_counter - 1)
+        is_drifting = self.drift_release_counter > 0
+        is_using_nitro = player.is_nitro_active
+
+        self._update_loop_channel(
+            "accelerate",
+            self.engine_channel,
+            self.engine_sound,
+            is_accelerating,
+            ENGINE_BASE_VOLUME + (speed_ratio * ENGINE_SPEED_VOLUME),
+        )
+        self._update_loop_channel(
+            "drift",
+            self.drift_channel,
+            self.drift_sound,
+            is_drifting,
+            DRIFT_BASE_VOLUME + (speed_ratio * DRIFT_SPEED_VOLUME),
+        )
+        self._update_loop_channel(
+            "nitro",
+            self.nitro_channel,
+            self.nitro_sound,
+            is_using_nitro,
+            NITRO_BASE_VOLUME + (speed_ratio * NITRO_SPEED_VOLUME),
+        )
+
+    def _update_loop_channel(self, channel_name, channel, sound, should_play, volume):
+        if channel is None or sound is None:
+            return
+        try:
+            clamped_volume = max(0.0, min(1.0, volume))
+            target_volume = clamped_volume if should_play else 0.0
+            previous = self.channel_states.get(channel_name)
+            current = (bool(should_play), round(target_volume, 2))
+            if previous != current:
+                self.channel_states[channel_name] = current
+                self._log(f"canal={channel_name} play={current[0]} volume={current[1]:.2f}")
+            if channel_name == "drift":
+                if not channel.get_busy():
+                    channel.play(sound, loops=-1)
+                    self._log("canal=drift reiniciado en loop continuo")
+                channel.set_volume(target_volume)
+                return
+
+            if should_play:
+                if not channel.get_busy():
+                    channel.play(sound, loops=-1)
+                    self._log(f"canal={channel_name} inicio de loop")
+                channel.set_volume(clamped_volume)
+            elif channel.get_busy():
+                channel.stop()
+                self._log(f"canal={channel_name} detenido")
+        except pygame.error:
+            self.failed = True
+            self._log(f"error de reproduccion en canal={channel_name}")
+
+    def stop(self):
+        if not pygame.mixer.get_init():
+            return
+        try:
+            self._log("deteniendo sistema de audio")
+            for channel in (self.engine_channel, self.drift_channel, self.nitro_channel):
+                if channel is not None:
+                    channel.stop()
+            pygame.mixer.music.stop()
+            self._log("audio detenido")
+        except pygame.error:
+            self._log("fallo al detener el audio")
 
 
 class Particle:
@@ -180,7 +562,9 @@ class Car:
 
         self.dir_x = 0.0
         self.dir_y = 0.0
+        self.is_moving = False
         self.is_braking = False
+        self.is_drifting = False
         self.is_nitro_active = False
         self.particles = []
         self.magnet_timer = 0
@@ -372,7 +756,9 @@ class Car:
             self.dir_y = forward_y * forward_speed + lateral_y * lateral_speed
 
         drift_val = math.hypot(target_dx - self.dir_x, target_dy - self.dir_y)
-        if (drift_val > 1.2 or self.is_braking) and abs(self.speed) > 3:
+        self.is_moving = abs(self.speed) > 0.35 or math.hypot(self.dir_x, self.dir_y) > 0.35
+        self.is_drifting = (drift_val > 0.8 or self.is_braking) and abs(self.speed) > 3
+        if (drift_val > 0.8 or self.is_braking) and abs(self.speed) > 3:
             self.add_skids(skid_marks, drift_val)
 
         self.x += self.dir_x
@@ -433,12 +819,14 @@ class Game:
     def __init__(self):
         pygame.init()
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT), pygame.DOUBLEBUF)
-        pygame.display.set_caption("Drift or Die")
+        pygame.display.set_caption(GAME_TITLE)
         self.clock = pygame.time.Clock()
         self.font_gui = pygame.font.SysFont("Impact", 28)
         self.font_msg = pygame.font.SysFont("Impact", 72)
         self.font_btn = pygame.font.SysFont("Impact", 36)
         self.font_small = pygame.font.SysFont("Arial", 22)
+        self.music = AudioManager()
+        self.music.start()
 
         self.state = "MENU_MAIN"
         self.main_menu_buttons = [
@@ -508,6 +896,7 @@ class Game:
                 elif button["action"] == "options":
                     self.state = "OPTIONS"
                 else:
+                    self.music.stop()
                     pygame.quit()
                     sys.exit()
                 pygame.time.delay(180)
@@ -545,10 +934,21 @@ class Game:
         line1 = self.font_gui.render("Controles: W A S D para mover, ESPACIO para derrapar.", True, (220, 220, 220))
         line2 = self.font_gui.render("SHIFT IZQ para usar nitro.", True, (220, 220, 220))
         line3 = self.font_gui.render("ESC para volver al menu principal.", True, (220, 220, 220))
+        if self.music.ready:
+            music_text = f"Musica: cargada en {USER_MUSIC_DIR}"
+            music_color = (120, 220, 160)
+        elif self.music.failed:
+            music_text = "Musica: error detectado, el juego sigue sin audio"
+            music_color = (255, 170, 120)
+        else:
+            music_text = "Musica: creando carpeta local y descargando desde GitHub"
+            music_color = (180, 180, 210)
+        line4 = self.font_gui.render(music_text, True, music_color)
         self.screen.blit(title, (WIDTH // 2 - title.get_width() // 2, 120))
         self.screen.blit(line1, (WIDTH // 2 - line1.get_width() // 2, 300))
         self.screen.blit(line2, (WIDTH // 2 - line2.get_width() // 2, 350))
         self.screen.blit(line3, (WIDTH // 2 - line3.get_width() // 2, 430))
+        self.screen.blit(line4, (WIDTH // 2 - line4.get_width() // 2, 500))
 
     def spawn_upgrade(self):
         bias_x = self.player.dir_x if abs(self.player.dir_x) > 0.05 else math.cos(math.radians(self.player.angle))
@@ -619,6 +1019,7 @@ class Game:
 
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
+                    self.music.stop()
                     pygame.quit()
                     sys.exit()
                 if event.type == pygame.KEYDOWN:
@@ -665,6 +1066,7 @@ class Game:
             buffed_ai.rotation_speed += 2.5
 
         self.player.update(keys, self.skid_marks)
+        self.music.update_vehicle_audio(self.player)
         for ai in self.ais:
             ai.update(self.player, self.skid_marks)
 

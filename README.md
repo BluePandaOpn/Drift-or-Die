@@ -7,6 +7,7 @@
 - Juego principal: [main.py](/c:/Users/ADMIN/Documents/coche/main.py)
 - Launcher: [Launcher/Launcher.py](/c:/Users/ADMIN/Documents/coche/Launcher/Launcher.py)
 - Manifiesto de distribucion: [launcher_manifest.json](/c:/Users/ADMIN/Documents/coche/launcher_manifest.json)
+- Manifiesto de musica remota: [music_manifest.json](/c:/Users/ADMIN/Documents/coche/music_manifest.json)
 - Binario local opcional: `bin/Drift or Die.exe`
 
 ## Mejoras aplicadas al launcher
@@ -18,6 +19,22 @@
 - Mantiene arranque offline cuando existe una copia local valida
 
 La logica principal del juego no se toca. Los cambios se concentran en instalacion, actualizacion y arranque.
+
+## Musica remota
+
+El juego ahora puede cargar audio desde GitHub al arrancar y usarlo segun el estado del coche.
+
+- Musica de fondo
+- Sonido de aceleracion
+- Sonido de derrape
+- Sonido de nitro
+
+Funcionamiento:
+
+1. El juego intenta leer `music_manifest.json` desde GitHub.
+2. Si faltan archivos, crea la carpeta local `Documents/DriftOrDie/assets/music`.
+3. Descarga ahi los audios remotos y los reutiliza desde esa ubicacion.
+4. Si algun archivo o el mixer falla, el juego sigue funcionando sin bloquearse.
 
 ## Estructura recomendada
 

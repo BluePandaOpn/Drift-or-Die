@@ -1,0 +1,22 @@
+{
+  "version": "1.1.0",
+  "background_volume": 0.35,
+  "tracks": {
+    "background": {
+      "filename": "Musica.mp3",
+      "url": "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/assets/music/Musica.mp3"
+    },
+    "accelerate": {
+      "filename": "Coche_coriendo.m4a",
+      "url": "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/assets/music/Coche_coriendo.m4a"
+    },
+    "drift": {
+      "filename": "drift.mp3",
+      "url": "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/assets/music/drift.mp3"
+    },
+    "nitro": {
+      "filename": "Uso_nitro.m4a",
+      "url": "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/assets/music/Uso_nitro.m4a"
+    }
+  }
+}
