@@ -27,6 +27,8 @@ GAME_INSTALL_DIR = os.path.join(ROOT_INSTALL_DIR, "Game")
 LAUNCHER_EXECUTABLE_PATH = os.path.join(LAUNCHER_INSTALL_DIR, LAUNCHER_EXECUTABLE_NAME)
 GAME_EXECUTABLE_PATH = os.path.join(GAME_INSTALL_DIR, GAME_EXECUTABLE_NAME)
 GAME_VERSION_PATH = os.path.join(GAME_INSTALL_DIR, "version.txt")
+GAME_ASSETS_DIR = os.path.join(GAME_INSTALL_DIR, "assets")
+GAME_MUSIC_DIR = os.path.join(GAME_ASSETS_DIR, "music")
 LAUNCHER_STATE_PATH = os.path.join(LAUNCHER_INSTALL_DIR, "launcher_state.json")
 
 RAW_BASE_URL = "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main"
@@ -395,6 +397,11 @@ class SnakeLauncher(ctk.CTk):
         ensure_directory(ROOT_INSTALL_DIR)
         ensure_directory(LAUNCHER_INSTALL_DIR)
         ensure_directory(GAME_INSTALL_DIR)
+        self.ensure_game_runtime_layout()
+
+    def ensure_game_runtime_layout(self):
+        ensure_directory(GAME_ASSETS_DIR)
+        ensure_directory(GAME_MUSIC_DIR)
 
     def get_local_game_binary_candidates(self):
         project_root = get_project_root()
@@ -478,6 +485,7 @@ class SnakeLauncher(ctk.CTk):
         return (None, None, None)
 
     def seed_game_from_local_build(self):
+        self.ensure_game_runtime_layout()
         if os.path.exists(GAME_EXECUTABLE_PATH):
             return False
 
@@ -654,6 +662,7 @@ class SnakeLauncher(ctk.CTk):
         return self.schedule_launcher_replace(downloaded_launcher)
 
     def update_game_if_needed(self, manifest):
+        self.ensure_game_runtime_layout()
         game_info = manifest.get("game", {})
         remote_version = game_info.get("version", "0.0.0")
         remote_url = game_info.get("url", FALLBACK_GAME_URL)
@@ -687,6 +696,7 @@ class SnakeLauncher(ctk.CTk):
         return remote_version
 
     def ejecutar_juego(self):
+        self.ensure_game_runtime_layout()
         command, working_dir, runtime_kind = self.get_runtime_game_entry()
         if not command:
             self.set_status(
