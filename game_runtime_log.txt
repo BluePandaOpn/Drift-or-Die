@@ -1,0 +1,1079 @@
+[2026-04-25 18:56:22] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 18:56:22] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 18:56:22] [runtime] python=3.13.13 frozen=False
+[2026-04-25 18:56:22] [runtime] arrancando juego
+[2026-04-25 18:56:22] [game] inicializando pygame
+[2026-04-25 18:56:23] [manager_music] iniciando sistema de audio
+[2026-04-25 18:56:23] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 18:56:23] [game] audio manager arrancado
+[2026-04-25 18:56:23] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 18:56:23] [game] estado de partida reiniciado
+[2026-04-25 18:56:23] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 18:56:23] [game] game inicializado correctamente
+[2026-04-25 18:56:23] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 18:56:23] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 18:56:23] [game] bucle principal iniciado
+[2026-04-25 18:56:23] [runtime] cerrando juego
+[2026-04-25 18:56:24] [crash] excepcion no controlada: 
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1400, in <module>
+    Game().run()
+    ~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1226, in run
+    self.clock.tick(FPS)
+    ~~~~~~~~~~~~~~~^^^^^
+KeyboardInterrupt
+
+[2026-04-25 18:56:27] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 18:56:27] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 18:56:27] [runtime] python=3.13.13 frozen=False
+[2026-04-25 18:56:27] [runtime] arrancando juego
+[2026-04-25 18:56:27] [game] inicializando pygame
+[2026-04-25 18:56:27] [manager_music] iniciando sistema de audio
+[2026-04-25 18:56:27] [game] audio manager arrancado
+[2026-04-25 18:56:27] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 18:56:27] [game] estado de partida reiniciado
+[2026-04-25 18:56:27] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 18:56:27] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 18:56:27] [game] game inicializado correctamente
+[2026-04-25 18:56:27] [game] bucle principal iniciado
+[2026-04-25 18:56:27] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 18:56:27] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 18:56:28] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 18:56:28] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 18:56:28] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 18:56:28] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 18:56:28] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 18:56:28] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 18:56:28] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 18:56:28] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 18:56:28] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 18:56:28] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 18:56:28] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 18:56:28] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 18:56:28] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 18:56:28] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 18:56:28] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 18:56:28] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 18:56:28] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 18:56:28] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 18:56:28] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 18:56:28] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 18:56:28] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 18:56:28] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 18:56:28] [manager_music] musica de fondo activa en loop
+[2026-04-25 18:56:28] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 18:56:29] [manager_music] ui click reproducido
+[2026-04-25 18:56:32] [game] evento quit recibido
+[2026-04-25 18:56:32] [manager_music] deteniendo sistema de audio
+[2026-04-25 18:56:32] [manager_music] audio detenido
+[2026-04-25 18:56:32] [runtime] cerrando juego
+[2026-04-25 18:59:04] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 18:59:04] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 18:59:04] [runtime] python=3.13.13 frozen=False
+[2026-04-25 18:59:04] [runtime] arrancando juego
+[2026-04-25 18:59:04] [game] inicializando pygame
+[2026-04-25 18:59:04] [manager_music] iniciando sistema de audio
+[2026-04-25 18:59:04] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 18:59:04] [game] audio manager arrancado
+[2026-04-25 18:59:04] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 18:59:04] [game] estado de partida reiniciado
+[2026-04-25 18:59:04] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 18:59:04] [game] game inicializado correctamente
+[2026-04-25 18:59:04] [game] bucle principal iniciado
+[2026-04-25 18:59:04] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 18:59:04] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 18:59:04] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 18:59:04] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 18:59:04] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 18:59:04] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 18:59:04] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 18:59:04] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 18:59:04] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 18:59:04] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 18:59:04] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 18:59:04] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 18:59:04] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 18:59:04] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 18:59:04] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 18:59:04] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 18:59:04] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 18:59:04] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 18:59:04] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 18:59:04] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 18:59:04] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 18:59:04] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 18:59:04] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 18:59:04] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 18:59:04] [manager_music] musica de fondo activa en loop
+[2026-04-25 18:59:04] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 18:59:05] [manager_music] ui click reproducido
+[2026-04-25 18:59:09] [manager_music] ui click reproducido
+[2026-04-25 18:59:10] [manager_music] ui click reproducido
+[2026-04-25 18:59:10] [game] estado de partida reiniciado
+[2026-04-25 18:59:10] [game] partida iniciada con clase=0
+[2026-04-25 18:59:10] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 18:59:10] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.09
+[2026-04-25 18:59:11] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.10
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.11
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.12
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.13
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.14
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.15
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.16
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.17
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.18
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.19
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.20
+[2026-04-25 18:59:11] [manager_music] canal=accelerate play=True volume=0.21
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.22
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.23
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.24
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.25
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.26
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.27
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.28
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.29
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.30
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.31
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.32
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.33
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.34
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.35
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.36
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.37
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.38
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.39
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.40
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 18:59:12] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 18:59:23] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 18:59:23] [manager_music] canal=accelerate detenido
+[2026-04-25 18:59:23] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 18:59:23] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 18:59:24] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 18:59:24] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 18:59:24] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 18:59:24] [manager_music] canal=nitro detenido
+[2026-04-25 18:59:25] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 18:59:25] [manager_music] canal=accelerate detenido
+[2026-04-25 18:59:25] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 18:59:25] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 18:59:26] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 18:59:26] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 18:59:26] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 18:59:26] [manager_music] canal=nitro detenido
+[2026-04-25 18:59:36] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 18:59:36] [manager_music] canal=accelerate detenido
+[2026-04-25 18:59:36] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 18:59:36] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 18:59:37] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 18:59:37] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 18:59:37] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 18:59:37] [manager_music] canal=nitro detenido
+[2026-04-25 18:59:38] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 18:59:38] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 18:59:38] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 18:59:46] [manager_music] canal=accelerate detenido por parada de gameplay
+[2026-04-25 18:59:48] [manager_music] ui click reproducido
+[2026-04-25 18:59:48] [game] estado de partida reiniciado
+[2026-04-25 18:59:48] [game] partida iniciada con clase=0
+[2026-04-25 18:59:48] [manager_music] canal=accelerate play=True volume=0.09
+[2026-04-25 18:59:48] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 18:59:48] [manager_music] canal=accelerate play=True volume=0.10
+[2026-04-25 18:59:48] [manager_music] canal=accelerate play=True volume=0.11
+[2026-04-25 18:59:48] [manager_music] canal=accelerate play=True volume=0.12
+[2026-04-25 18:59:48] [manager_music] canal=accelerate play=True volume=0.13
+[2026-04-25 18:59:48] [manager_music] canal=accelerate play=True volume=0.14
+[2026-04-25 18:59:48] [manager_music] canal=accelerate play=True volume=0.15
+[2026-04-25 18:59:48] [manager_music] canal=accelerate play=True volume=0.16
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.17
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.18
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.19
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.20
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.21
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.22
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.23
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.24
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.25
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.26
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.27
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.28
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.29
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.30
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.31
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.32
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.33
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.34
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.35
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.36
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.37
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.38
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.39
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.40
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 18:59:49] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 18:59:49] [manager_music] canal=accelerate detenido
+[2026-04-25 18:59:49] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 18:59:49] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 18:59:50] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 18:59:50] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 18:59:50] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 18:59:50] [manager_music] canal=nitro detenido
+[2026-04-25 18:59:54] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 18:59:54] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 18:59:54] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 18:59:58] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 18:59:58] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 18:59:58] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 18:59:59] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 18:59:59] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 18:59:59] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:00:02] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:00:02] [manager_music] canal=accelerate detenido
+[2026-04-25 19:00:02] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 19:00:02] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 19:00:03] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:00:03] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:00:03] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:00:03] [manager_music] canal=nitro detenido
+[2026-04-25 19:00:08] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:00:08] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:00:10] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:00:10] [manager_music] canal=accelerate detenido
+[2026-04-25 19:00:10] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 19:00:10] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 19:00:11] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:00:11] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:00:11] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:00:11] [manager_music] canal=nitro detenido
+[2026-04-25 19:00:14] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:00:14] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:00:20] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:00:20] [manager_music] canal=accelerate detenido
+[2026-04-25 19:00:20] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 19:00:20] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 19:00:20] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:00:20] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:00:20] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:00:20] [manager_music] canal=nitro detenido
+[2026-04-25 19:00:27] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:00:27] [manager_music] canal=accelerate detenido
+[2026-04-25 19:00:27] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 19:00:27] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 19:00:28] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:00:28] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:00:28] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:00:28] [manager_music] canal=nitro detenido
+[2026-04-25 19:00:32] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:00:32] [manager_music] canal=accelerate detenido
+[2026-04-25 19:00:32] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 19:00:32] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 19:00:33] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:00:33] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:00:33] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:00:33] [manager_music] canal=nitro detenido
+[2026-04-25 19:00:36] [manager_music] canal=accelerate detenido por parada de gameplay
+[2026-04-25 19:00:38] [game] evento quit recibido
+[2026-04-25 19:00:38] [manager_music] deteniendo sistema de audio
+[2026-04-25 19:00:38] [manager_music] audio detenido
+[2026-04-25 19:00:38] [runtime] cerrando juego
+[2026-04-25 19:07:29] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:07:29] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 19:07:29] [runtime] python=3.13.13 frozen=False
+[2026-04-25 19:07:29] [runtime] arrancando juego
+[2026-04-25 19:07:29] [game] inicializando pygame
+[2026-04-25 19:07:29] [manager_music] iniciando sistema de audio
+[2026-04-25 19:07:29] [game] audio manager arrancado
+[2026-04-25 19:07:29] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:07:29] [game] estado de partida reiniciado
+[2026-04-25 19:07:29] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 19:07:29] [game] game inicializado correctamente
+[2026-04-25 19:07:29] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 19:07:29] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:07:29] [game] bucle principal iniciado
+[2026-04-25 19:07:29] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:07:30] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 19:07:30] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 19:07:30] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:07:30] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:07:30] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 19:07:30] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:07:30] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:07:30] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 19:07:30] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:07:30] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 19:07:30] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:07:30] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:07:30] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:07:30] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:07:30] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:07:30] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 19:07:30] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 19:07:30] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:07:30] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 19:07:30] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:07:30] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:07:30] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:07:30] [manager_music] musica de fondo activa en loop
+[2026-04-25 19:07:30] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 19:07:30] [manager_music] ui click reproducido
+[2026-04-25 19:10:09] [game] evento quit recibido
+[2026-04-25 19:10:09] [manager_music] deteniendo sistema de audio
+[2026-04-25 19:10:09] [manager_music] audio detenido
+[2026-04-25 19:10:09] [runtime] cerrando juego
+[2026-04-25 19:10:13] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:10:13] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 19:10:13] [runtime] python=3.13.13 frozen=False
+[2026-04-25 19:10:13] [runtime] arrancando juego
+[2026-04-25 19:10:13] [game] inicializando pygame
+[2026-04-25 19:10:13] [manager_music] iniciando sistema de audio
+[2026-04-25 19:10:13] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:10:13] [game] audio manager arrancado
+[2026-04-25 19:10:14] [game] estado de partida reiniciado
+[2026-04-25 19:10:14] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 19:10:14] [game] game inicializado correctamente
+[2026-04-25 19:10:14] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 19:10:14] [game] bucle principal iniciado
+[2026-04-25 19:10:14] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:10:14] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:10:14] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 19:10:14] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 19:10:14] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:10:14] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:10:14] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 19:10:14] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:10:14] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:10:14] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 19:10:14] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:10:14] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 19:10:14] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:10:14] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:10:14] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:10:14] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:10:14] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:10:14] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 19:10:14] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 19:10:14] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:10:14] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 19:10:14] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:10:14] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:10:14] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:10:14] [manager_music] musica de fondo activa en loop
+[2026-04-25 19:10:14] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 19:10:15] [manager_music] ui click reproducido
+[2026-04-25 19:10:29] [game] evento quit recibido
+[2026-04-25 19:10:29] [manager_music] deteniendo sistema de audio
+[2026-04-25 19:10:29] [manager_music] audio detenido
+[2026-04-25 19:10:30] [runtime] cerrando juego
+[2026-04-25 19:40:17] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:40:17] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 19:40:17] [runtime] python=3.13.13 frozen=False
+[2026-04-25 19:40:17] [runtime] arrancando juego
+[2026-04-25 19:40:17] [game] inicializando pygame
+[2026-04-25 19:40:17] [manager_music] iniciando sistema de audio
+[2026-04-25 19:40:17] [game] audio manager arrancado
+[2026-04-25 19:40:17] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:40:17] [game] estado de partida reiniciado
+[2026-04-25 19:40:17] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 19:40:17] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 19:40:17] [game] game inicializado correctamente
+[2026-04-25 19:40:17] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:40:17] [game] bucle principal iniciado
+[2026-04-25 19:40:18] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:40:18] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 19:40:18] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 19:40:18] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:40:18] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:40:18] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 19:40:18] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:40:18] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:40:18] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 19:40:18] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:40:18] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 19:40:18] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:40:18] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:40:18] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:40:18] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:40:18] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:40:18] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 19:40:18] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 19:40:18] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:40:18] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 19:40:18] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:40:18] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:40:18] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:40:18] [manager_music] musica de fondo activa en loop
+[2026-04-25 19:40:18] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 19:40:56] [manager_music] ui click reproducido
+[2026-04-25 19:40:57] [manager_music] ui click reproducido
+[2026-04-25 19:40:57] [game] estado de partida reiniciado
+[2026-04-25 19:40:57] [game] partida iniciada con clase=0
+[2026-04-25 19:40:57] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:40:57] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.09
+[2026-04-25 19:40:58] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.10
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.11
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.12
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.13
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.14
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.15
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.16
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.17
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.18
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.19
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.20
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.21
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.22
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.23
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.24
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.25
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.26
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.27
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.28
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.29
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.30
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.31
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.32
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.33
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.34
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.35
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.36
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.37
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.38
+[2026-04-25 19:40:58] [manager_music] canal=accelerate play=True volume=0.39
+[2026-04-25 19:40:59] [manager_music] canal=accelerate play=True volume=0.40
+[2026-04-25 19:40:59] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 19:40:59] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:40:59] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:02] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 19:41:02] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:02] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:04] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 19:41:04] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:04] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:12] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:12] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:14] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:14] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:17] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:17] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:22] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:41:22] [manager_music] canal=accelerate detenido
+[2026-04-25 19:41:22] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 19:41:22] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 19:41:23] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:23] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:41:23] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:41:23] [manager_music] canal=nitro detenido
+[2026-04-25 19:41:23] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:23] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:25] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:25] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:36] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:36] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:36] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:36] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:38] [manager_music] canal=accelerate detenido por parada de gameplay
+[2026-04-25 19:41:40] [manager_music] ui click reproducido
+[2026-04-25 19:41:40] [game] estado de partida reiniciado
+[2026-04-25 19:41:40] [game] partida iniciada con clase=0
+[2026-04-25 19:41:40] [manager_music] canal=accelerate play=True volume=0.09
+[2026-04-25 19:41:40] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:41:40] [manager_music] canal=accelerate play=True volume=0.10
+[2026-04-25 19:41:40] [manager_music] canal=accelerate play=True volume=0.11
+[2026-04-25 19:41:40] [manager_music] canal=accelerate play=True volume=0.12
+[2026-04-25 19:41:40] [manager_music] canal=accelerate play=True volume=0.13
+[2026-04-25 19:41:40] [manager_music] canal=accelerate play=True volume=0.14
+[2026-04-25 19:41:40] [manager_music] canal=accelerate play=True volume=0.15
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.16
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.17
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.18
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.19
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.20
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.21
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.22
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.23
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.24
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.25
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.26
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.27
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.28
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.29
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.30
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.31
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.32
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.33
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.34
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.35
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.36
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.37
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.38
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.39
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.40
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:41] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:54] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:41:54] [manager_music] canal=accelerate detenido
+[2026-04-25 19:41:54] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 19:41:54] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 19:41:54] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:54] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:41:54] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:41:54] [manager_music] canal=nitro detenido
+[2026-04-25 19:41:55] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 19:41:55] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:55] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:56] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:41:56] [manager_music] canal=accelerate detenido
+[2026-04-25 19:41:56] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 19:41:56] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 19:41:56] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:56] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:41:56] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:41:56] [manager_music] canal=nitro detenido
+[2026-04-25 19:41:56] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:41:56] [manager_music] canal=accelerate detenido
+[2026-04-25 19:41:56] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 19:41:56] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 19:41:56] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:41:56] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:41:56] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:41:56] [manager_music] canal=nitro detenido
+[2026-04-25 19:41:59] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 19:41:59] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:41:59] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:42:01] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:42:01] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 19:42:01] [manager_music] canal=accelerate play=True volume=0.40
+[2026-04-25 19:42:01] [manager_music] canal=accelerate play=True volume=0.39
+[2026-04-25 19:42:01] [manager_music] canal=accelerate play=True volume=0.38
+[2026-04-25 19:42:01] [manager_music] canal=accelerate play=True volume=0.37
+[2026-04-25 19:42:01] [manager_music] canal=accelerate play=True volume=0.36
+[2026-04-25 19:42:02] [manager_music] canal=accelerate play=True volume=0.35
+[2026-04-25 19:42:02] [manager_music] canal=accelerate play=True volume=0.34
+[2026-04-25 19:42:02] [game] evento quit recibido
+[2026-04-25 19:42:02] [manager_music] deteniendo sistema de audio
+[2026-04-25 19:42:02] [manager_music] audio detenido
+[2026-04-25 19:42:02] [runtime] cerrando juego
+[2026-04-25 19:42:38] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:42:38] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 19:42:38] [runtime] python=3.13.13 frozen=False
+[2026-04-25 19:42:38] [runtime] arrancando juego
+[2026-04-25 19:42:38] [game] inicializando pygame
+[2026-04-25 19:42:38] [manager_music] iniciando sistema de audio
+[2026-04-25 19:42:38] [game] audio manager arrancado
+[2026-04-25 19:42:38] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:42:38] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 19:42:38] [game] estado de partida reiniciado
+[2026-04-25 19:42:38] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 19:42:38] [game] game inicializado correctamente
+[2026-04-25 19:42:38] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:42:38] [game] bucle principal iniciado
+[2026-04-25 19:42:38] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:42:38] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 19:42:38] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 19:42:38] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:42:38] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:42:38] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 19:42:38] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:42:38] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:42:38] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 19:42:38] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:42:38] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 19:42:38] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:42:38] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:42:38] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:42:38] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:42:38] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:42:38] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 19:42:38] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 19:42:38] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:42:38] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 19:42:38] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:42:38] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:42:38] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:42:38] [manager_music] musica de fondo activa en loop
+[2026-04-25 19:42:38] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 19:42:39] [game] evento quit recibido
+[2026-04-25 19:42:39] [manager_music] deteniendo sistema de audio
+[2026-04-25 19:42:39] [manager_music] audio detenido
+[2026-04-25 19:42:39] [runtime] cerrando juego
+[2026-04-25 19:49:05] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:49:05] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 19:49:05] [runtime] python=3.13.13 frozen=False
+[2026-04-25 19:49:05] [runtime] arrancando juego
+[2026-04-25 19:49:05] [game] inicializando pygame
+[2026-04-25 19:49:05] [manager_music] iniciando sistema de audio
+[2026-04-25 19:49:05] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:49:05] [game] audio manager arrancado
+[2026-04-25 19:49:05] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 19:49:05] [game] estado de partida reiniciado
+[2026-04-25 19:49:05] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 19:49:05] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:49:05] [game] game inicializado correctamente
+[2026-04-25 19:49:05] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:49:05] [game] bucle principal iniciado
+[2026-04-25 19:49:06] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 19:49:06] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 19:49:06] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:06] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:06] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 19:49:06] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:49:06] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:49:06] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 19:49:06] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:49:06] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 19:49:06] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:49:06] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:49:06] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:49:06] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:06] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:06] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 19:49:06] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 19:49:06] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:49:06] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 19:49:06] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:49:06] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:49:06] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:49:06] [manager_music] musica de fondo activa en loop
+[2026-04-25 19:49:06] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 19:49:08] [manager_music] ui click reproducido
+[2026-04-25 19:49:08] [game] error fatal en el bucle principal: can only concatenate list (not "NoneType") to list
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1423, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1210, in draw_options_menu
+    self.options_click_rects = tab_rects + section_rects
+                               ~~~~~~~~~~^~~~~~~~~~~~~~~
+TypeError: can only concatenate list (not "NoneType") to list
+
+[2026-04-25 19:49:08] [runtime] cerrando juego
+[2026-04-25 19:49:08] [crash] excepcion no controlada: can only concatenate list (not "NoneType") to list
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1574, in <module>
+    Game().run()
+    ~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1423, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1210, in draw_options_menu
+    self.options_click_rects = tab_rects + section_rects
+                               ~~~~~~~~~~^~~~~~~~~~~~~~~
+TypeError: can only concatenate list (not "NoneType") to list
+
+[2026-04-25 19:49:09] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:49:09] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 19:49:09] [runtime] python=3.13.13 frozen=False
+[2026-04-25 19:49:09] [runtime] arrancando juego
+[2026-04-25 19:49:09] [game] inicializando pygame
+[2026-04-25 19:49:09] [manager_music] iniciando sistema de audio
+[2026-04-25 19:49:09] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:49:09] [game] audio manager arrancado
+[2026-04-25 19:49:09] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 19:49:09] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 19:49:09] [game] estado de partida reiniciado
+[2026-04-25 19:49:09] [game] game inicializado correctamente
+[2026-04-25 19:49:09] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:49:09] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:49:09] [game] bucle principal iniciado
+[2026-04-25 19:49:10] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 19:49:10] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 19:49:10] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:10] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:10] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 19:49:10] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:49:10] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:49:10] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 19:49:10] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:49:10] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 19:49:10] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:49:10] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:49:10] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:49:10] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:10] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:10] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 19:49:10] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 19:49:10] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:49:10] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 19:49:10] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:49:10] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:49:10] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:49:10] [manager_music] musica de fondo activa en loop
+[2026-04-25 19:49:10] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 19:49:10] [manager_music] ui click reproducido
+[2026-04-25 19:49:10] [game] error fatal en el bucle principal: can only concatenate list (not "NoneType") to list
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1423, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1210, in draw_options_menu
+    self.options_click_rects = tab_rects + section_rects
+                               ~~~~~~~~~~^~~~~~~~~~~~~~~
+TypeError: can only concatenate list (not "NoneType") to list
+
+[2026-04-25 19:49:10] [runtime] cerrando juego
+[2026-04-25 19:49:10] [crash] excepcion no controlada: can only concatenate list (not "NoneType") to list
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1574, in <module>
+    Game().run()
+    ~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1423, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1210, in draw_options_menu
+    self.options_click_rects = tab_rects + section_rects
+                               ~~~~~~~~~~^~~~~~~~~~~~~~~
+TypeError: can only concatenate list (not "NoneType") to list
+
+[2026-04-25 19:49:11] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:49:11] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 19:49:11] [runtime] python=3.13.13 frozen=False
+[2026-04-25 19:49:11] [runtime] arrancando juego
+[2026-04-25 19:49:11] [game] inicializando pygame
+[2026-04-25 19:49:11] [manager_music] iniciando sistema de audio
+[2026-04-25 19:49:11] [game] audio manager arrancado
+[2026-04-25 19:49:11] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:49:11] [game] estado de partida reiniciado
+[2026-04-25 19:49:11] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 19:49:11] [game] game inicializado correctamente
+[2026-04-25 19:49:11] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 19:49:11] [game] bucle principal iniciado
+[2026-04-25 19:49:11] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:49:11] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:49:12] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 19:49:12] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 19:49:12] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:12] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:12] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 19:49:12] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:49:12] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:49:12] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 19:49:12] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:49:12] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 19:49:12] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:49:12] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:49:12] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:49:12] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:12] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:49:12] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 19:49:12] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 19:49:12] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:49:12] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 19:49:12] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:49:12] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:49:12] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:49:12] [manager_music] musica de fondo activa en loop
+[2026-04-25 19:49:12] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 19:49:12] [manager_music] ui click reproducido
+[2026-04-25 19:49:12] [game] error fatal en el bucle principal: can only concatenate list (not "NoneType") to list
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1423, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1210, in draw_options_menu
+    self.options_click_rects = tab_rects + section_rects
+                               ~~~~~~~~~~^~~~~~~~~~~~~~~
+TypeError: can only concatenate list (not "NoneType") to list
+
+[2026-04-25 19:49:12] [runtime] cerrando juego
+[2026-04-25 19:49:12] [crash] excepcion no controlada: can only concatenate list (not "NoneType") to list
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1574, in <module>
+    Game().run()
+    ~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1423, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1210, in draw_options_menu
+    self.options_click_rects = tab_rects + section_rects
+                               ~~~~~~~~~~^~~~~~~~~~~~~~~
+TypeError: can only concatenate list (not "NoneType") to list
+
+[2026-04-25 19:50:31] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:50:31] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 19:50:31] [runtime] python=3.13.13 frozen=False
+[2026-04-25 19:50:31] [runtime] arrancando juego
+[2026-04-25 19:50:31] [game] inicializando pygame
+[2026-04-25 19:50:32] [manager_music] iniciando sistema de audio
+[2026-04-25 19:50:32] [game] audio manager arrancado
+[2026-04-25 19:50:32] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:50:32] [game] estado de partida reiniciado
+[2026-04-25 19:50:32] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 19:50:32] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 19:50:32] [game] game inicializado correctamente
+[2026-04-25 19:50:32] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:50:32] [game] bucle principal iniciado
+[2026-04-25 19:50:32] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:50:34] [game] error fatal en el bucle principal: 'Game' object has no attribute '_handle_options_mouse'
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1426, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1212, in draw_options_menu
+    self._handle_options_mouse(mx, my)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Game' object has no attribute '_handle_options_mouse'. Did you mean: '_change_options_value'?
+
+[2026-04-25 19:50:34] [runtime] cerrando juego
+[2026-04-25 19:50:34] [crash] excepcion no controlada: 'Game' object has no attribute '_handle_options_mouse'
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1577, in <module>
+    Game().run()
+    ~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1426, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1212, in draw_options_menu
+    self._handle_options_mouse(mx, my)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Game' object has no attribute '_handle_options_mouse'. Did you mean: '_change_options_value'?
+
+[2026-04-25 19:52:56] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:52:56] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 19:52:56] [runtime] python=3.13.13 frozen=False
+[2026-04-25 19:52:56] [runtime] arrancando juego
+[2026-04-25 19:52:56] [game] inicializando pygame
+[2026-04-25 19:52:56] [manager_music] iniciando sistema de audio
+[2026-04-25 19:52:56] [game] audio manager arrancado
+[2026-04-25 19:52:56] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:52:56] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 19:52:56] [game] estado de partida reiniciado
+[2026-04-25 19:52:56] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 19:52:56] [game] game inicializado correctamente
+[2026-04-25 19:52:56] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:52:56] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:52:56] [game] bucle principal iniciado
+[2026-04-25 19:52:57] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 19:52:57] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 19:52:57] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:52:57] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:52:57] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 19:52:57] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:52:57] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:52:57] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 19:52:57] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:52:57] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 19:52:57] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:52:57] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:52:57] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:52:57] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:52:57] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:52:57] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 19:52:57] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 19:52:57] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:52:57] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 19:52:57] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:52:57] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:52:57] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:52:57] [manager_music] musica de fondo activa en loop
+[2026-04-25 19:52:57] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 19:52:57] [manager_music] ui click reproducido
+[2026-04-25 19:52:58] [game] error fatal en el bucle principal: 'Game' object has no attribute '_handle_options_mouse'
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1429, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1212, in draw_options_menu
+    self._handle_options_mouse(mx, my)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Game' object has no attribute '_handle_options_mouse'. Did you mean: '_change_options_value'?
+
+[2026-04-25 19:52:58] [runtime] cerrando juego
+[2026-04-25 19:52:58] [crash] excepcion no controlada: 'Game' object has no attribute '_handle_options_mouse'
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1580, in <module>
+    Game().run()
+    ~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1429, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1212, in draw_options_menu
+    self._handle_options_mouse(mx, my)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Game' object has no attribute '_handle_options_mouse'. Did you mean: '_change_options_value'?
+
+[2026-04-25 19:55:01] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:55:01] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 19:55:01] [runtime] python=3.13.13 frozen=False
+[2026-04-25 19:55:01] [runtime] arrancando juego
+[2026-04-25 19:55:01] [game] inicializando pygame
+[2026-04-25 19:55:01] [manager_music] iniciando sistema de audio
+[2026-04-25 19:55:02] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:55:02] [game] audio manager arrancado
+[2026-04-25 19:55:02] [game] estado de partida reiniciado
+[2026-04-25 19:55:02] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 19:55:02] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 19:55:02] [game] game inicializado correctamente
+[2026-04-25 19:55:02] [game] bucle principal iniciado
+[2026-04-25 19:55:02] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:55:02] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:55:02] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 19:55:02] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 19:55:02] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:55:02] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:55:02] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 19:55:02] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:55:02] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:55:02] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 19:55:02] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:55:02] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 19:55:02] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:55:02] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:55:02] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:55:02] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:55:02] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:55:02] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 19:55:02] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 19:55:02] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:55:02] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 19:55:02] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:55:02] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:55:02] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:55:02] [manager_music] musica de fondo activa en loop
+[2026-04-25 19:55:02] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 19:55:02] [manager_music] ui click reproducido
+[2026-04-25 19:55:03] [game] error fatal en el bucle principal: 'Game' object has no attribute '_handle_options_mouse'
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1432, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1212, in draw_options_menu
+    self._handle_options_mouse(mx, my)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Game' object has no attribute '_handle_options_mouse'. Did you mean: '_change_options_value'?
+
+[2026-04-25 19:55:03] [runtime] cerrando juego
+[2026-04-25 19:55:03] [crash] excepcion no controlada: 'Game' object has no attribute '_handle_options_mouse'
+Traceback (most recent call last):
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1583, in <module>
+    Game().run()
+    ~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1432, in run
+    self.draw_options_menu()
+    ~~~~~~~~~~~~~~~~~~~~~~^^
+  File "c:\Users\ADMIN\Documents\coche\main.py", line 1212, in draw_options_menu
+    self._handle_options_mouse(mx, my)
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^
+AttributeError: 'Game' object has no attribute '_handle_options_mouse'. Did you mean: '_change_options_value'?
+
+[2026-04-25 19:57:42] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Documents\coche runtime_root=c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:57:42] [runtime] log persistente: c:\Users\ADMIN\Documents\coche\game_runtime_log.txt
+[2026-04-25 19:57:42] [runtime] python=3.13.13 frozen=False
+[2026-04-25 19:57:42] [runtime] arrancando juego
+[2026-04-25 19:57:42] [game] inicializando pygame
+[2026-04-25 19:57:42] [manager_music] iniciando sistema de audio
+[2026-04-25 19:57:42] [game] audio manager arrancado
+[2026-04-25 19:57:42] [manager_music] directorio base del juego: c:\Users\ADMIN\Documents\coche
+[2026-04-25 19:57:42] [game] estado de partida reiniciado
+[2026-04-25 19:57:42] [manager_music] asegurando carpeta local de musica: c:\Users\ADMIN\Documents\coche\assets\music
+[2026-04-25 19:57:42] [game] game inicializado correctamente
+[2026-04-25 19:57:42] [manager_music] mixer inicializado y canales reservados
+[2026-04-25 19:57:42] [game] bucle principal iniciado
+[2026-04-25 19:57:42] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:57:42] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-04-25 19:57:42] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-04-25 19:57:42] [manager_music] manifiesto remoto cargado correctamente
+[2026-04-25 19:57:42] [music-cache] json cargado correctamente desde c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:57:42] [manager_music] cache cargada desde: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:57:42] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-04-25 19:57:42] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:57:42] [manager_music] pista disponible para background: c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:57:42] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-04-25 19:57:42] [manager_music] pista disponible para accelerate: c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:57:42] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-04-25 19:57:42] [manager_music] pista disponible para nitro: c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:57:42] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-04-25 19:57:42] [manager_music] pista disponible para click: c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:57:42] [music-cache] json guardado correctamente en c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:57:42] [manager_music] cache de audio actualizada en: c:\Users\ADMIN\Documents\coche\assets\music\music_cache.json
+[2026-04-25 19:57:42] [manager_music] volumen de fondo configurado en: 0.35
+[2026-04-25 19:57:42] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-04-25 19:57:42] [manager_music] efecto cargado: accelerate <- c:\Users\ADMIN\Documents\coche\assets\music\accelerate.wav
+[2026-04-25 19:57:42] [manager_music] sin archivo disponible para efecto=drift
+[2026-04-25 19:57:42] [manager_music] efecto cargado: nitro <- c:\Users\ADMIN\Documents\coche\assets\music\nitro.wav
+[2026-04-25 19:57:42] [manager_music] efecto cargado: click <- c:\Users\ADMIN\Documents\coche\assets\music\clic.mp3
+[2026-04-25 19:57:42] [manager_music] reproduciendo musica de fondo desde c:\Users\ADMIN\Documents\coche\assets\music\Musica.mp3
+[2026-04-25 19:57:42] [manager_music] musica de fondo activa en loop
+[2026-04-25 19:57:42] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-04-25 19:57:43] [manager_music] ui click reproducido
+[2026-04-25 19:57:44] [manager_music] ui click reproducido
+[2026-04-25 19:57:45] [manager_music] ui click reproducido
+[2026-04-25 19:57:45] [manager_music] ui click reproducido
+[2026-04-25 19:57:49] [manager_music] ui click reproducido
+[2026-04-25 19:57:50] [manager_music] ui click reproducido
+[2026-04-25 19:57:51] [manager_music] ui click reproducido
+[2026-04-25 19:57:52] [manager_music] ui click reproducido
+[2026-04-25 19:57:53] [manager_music] ui click reproducido
+[2026-04-25 19:57:56] [manager_music] ui click reproducido
+[2026-04-25 19:57:58] [manager_music] ui click reproducido
+[2026-04-25 19:57:59] [manager_music] ui click reproducido
+[2026-04-25 19:57:59] [game] estado de partida reiniciado
+[2026-04-25 19:57:59] [game] partida iniciada con clase=0
+[2026-04-25 19:57:59] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:57:59] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:57:59] [manager_music] canal=accelerate play=True volume=0.09
+[2026-04-25 19:57:59] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:57:59] [manager_music] canal=accelerate play=True volume=0.10
+[2026-04-25 19:57:59] [manager_music] canal=accelerate play=True volume=0.11
+[2026-04-25 19:57:59] [manager_music] canal=accelerate play=True volume=0.12
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.13
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.14
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.15
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.16
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.17
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.18
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.19
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.20
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.21
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.22
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.23
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.24
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.25
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.26
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.27
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.28
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.29
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.30
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.31
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.32
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.33
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.34
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.35
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.36
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.37
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.38
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.39
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.40
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.41
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.42
+[2026-04-25 19:58:00] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:58:04] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:58:04] [manager_music] canal=accelerate detenido
+[2026-04-25 19:58:04] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 19:58:04] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 19:58:04] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:58:04] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:58:04] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:58:04] [manager_music] canal=nitro detenido
+[2026-04-25 19:58:05] [manager_music] canal=accelerate play=False volume=0.00
+[2026-04-25 19:58:05] [manager_music] canal=accelerate detenido
+[2026-04-25 19:58:05] [manager_music] canal=nitro play=True volume=0.63
+[2026-04-25 19:58:05] [manager_music] canal=nitro reiniciado desde 0
+[2026-04-25 19:58:05] [manager_music] canal=accelerate play=True volume=0.43
+[2026-04-25 19:58:05] [manager_music] canal=accelerate reiniciado desde 0
+[2026-04-25 19:58:05] [manager_music] canal=nitro play=False volume=0.00
+[2026-04-25 19:58:05] [manager_music] canal=nitro detenido
+[2026-04-25 19:58:09] [manager_music] canal=accelerate detenido por parada de gameplay
+[2026-04-25 19:58:11] [game] evento quit recibido
+[2026-04-25 19:58:11] [manager_music] deteniendo sistema de audio
+[2026-04-25 19:58:11] [manager_music] audio detenido
+[2026-04-25 19:58:11] [runtime] cerrando juego

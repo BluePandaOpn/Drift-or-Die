@@ -212,6 +212,8 @@ class AudioManager:
         self.status = "disabled"
         self.asset_map = {}
         self.background_volume = DEFAULT_MUSIC_VOLUME
+        self.master_volume = 1.0
+        self.sfx_volume = 1.0
         self.engine_channel = None
         self.drift_channel = None
         self.nitro_channel = None
@@ -528,13 +530,23 @@ class AudioManager:
         try:
             self._log(f"reproduciendo musica de fondo desde {background_path}")
             pygame.mixer.music.load(background_path)
-            pygame.mixer.music.set_volume(self.background_volume)
+            pygame.mixer.music.set_volume(self.background_volume * self.master_volume)
             pygame.mixer.music.play(-1)
             self._log("musica de fondo activa en loop")
         except pygame.error as exc:
             self.failed = True
             self.status = "background-error"
             self._log(f"fallo al reproducir la musica de fondo: {exc}")
+
+    def apply_volume_settings(self):
+        if not pygame.mixer.get_init():
+            return
+        try:
+            pygame.mixer.music.set_volume(self.background_volume * self.master_volume)
+            if self.ui_channel is not None and self.click_sound is not None and self.ui_channel.get_busy():
+                self.ui_channel.set_volume(self.sfx_volume * self.master_volume)
+        except pygame.error:
+            pass
 
     def update_vehicle_audio(self, player):
         if not self.enabled or not player or not pygame.mixer.get_init():
@@ -596,6 +608,7 @@ class AudioManager:
             if self.ui_channel.get_busy():
                 self.ui_channel.stop()
             self.ui_channel.play(self.click_sound)
+            self.ui_channel.set_volume(self.sfx_volume * self.master_volume)
             self._log("ui click reproducido")
         except pygame.error as exc:
             self.failed = True
@@ -620,7 +633,7 @@ class AudioManager:
                         channel.stop()
                     channel.play(sound, loops=-1)
                     self._log(f"canal={channel_name} reiniciado desde 0")
-                channel.set_volume(clamped_volume)
+                channel.set_volume(clamped_volume * self.master_volume * self.sfx_volume)
             elif channel.get_busy():
                 channel.stop()
                 self._log(f"canal={channel_name} detenido")
@@ -819,7 +832,7 @@ class Car:
             return True
         return False
 
-    def update(self, keys_or_target, skid_marks):
+    def update(self, keys_or_target, skid_marks, key_bindings=None):
         input_fwd = False
         input_back = False
         input_left = False
@@ -829,12 +842,13 @@ class Car:
         threshold_brake = False
 
         if not self.is_ai:
-            input_fwd = keys_or_target[pygame.K_w]
-            input_back = keys_or_target[pygame.K_s]
-            input_left = keys_or_target[pygame.K_a]
-            input_right = keys_or_target[pygame.K_d]
-            input_handbrake = keys_or_target[pygame.K_SPACE]
-            input_nitro = keys_or_target[pygame.K_LSHIFT] and self.nitro_level > 0 and input_fwd
+            key_bindings = key_bindings or {}
+            input_fwd = keys_or_target[key_bindings.get("forward", pygame.K_w)]
+            input_back = keys_or_target[key_bindings.get("back", pygame.K_s)]
+            input_left = keys_or_target[key_bindings.get("left", pygame.K_a)]
+            input_right = keys_or_target[key_bindings.get("right", pygame.K_d)]
+            input_handbrake = keys_or_target[key_bindings.get("handbrake", pygame.K_SPACE)]
+            input_nitro = keys_or_target[key_bindings.get("nitro", pygame.K_LSHIFT)] and self.nitro_level > 0 and input_fwd
         else:
             if self.is_buffed:
                 self.buff_timer -= 1
@@ -1028,6 +1042,32 @@ class Game:
             {"name": "SPEED DEMON", "desc": "+Velocidad, +Aceleracion", "color": (50, 200, 50)},
             {"name": "NITRO JUNKIE", "desc": "+Capacidad Nitro, +Empuje", "color": COLOR_NITRO},
         ]
+        self.options_tabs = ["GRÁFICOS", "SONIDO", "TECLAS"]
+        self.options_tab = 0
+        self.options_cursor = 0
+        self.graphics_quality = 1
+        self.graphics_quality_labels = ["BAJA", "MEDIA", "ALTA"]
+        self.show_fps = False
+        self.master_volume = 1.0
+        self.music_volume = DEFAULT_MUSIC_VOLUME
+        self.sfx_volume = 1.0
+        self.key_bindings = {
+            "forward": pygame.K_w,
+            "back": pygame.K_s,
+            "left": pygame.K_a,
+            "right": pygame.K_d,
+            "handbrake": pygame.K_SPACE,
+            "nitro": pygame.K_LSHIFT,
+        }
+        self.control_binding_labels = [
+            ("forward", "Adelante"),
+            ("back", "Reversa"),
+            ("left", "Izquierda"),
+            ("right", "Derecha"),
+            ("handbrake", "Freno de mano"),
+            ("nitro", "Nitro"),
+        ]
+        self.rebinding_action = None
         self.game_over_buttons = [
             {"name": "REINICIAR", "action": "restart"},
             {"name": "MENU", "action": "menu"},
@@ -1137,24 +1177,167 @@ class Game:
     def draw_options_menu(self):
         self.screen.fill((25, 28, 38))
         title = self.font_msg.render("OPCIONES", True, (255, 255, 255))
-        line1 = self.font_gui.render("Controles: W A S D para mover, ESPACIO para derrapar.", True, (220, 220, 220))
-        line2 = self.font_gui.render("SHIFT IZQ para usar nitro.", True, (220, 220, 220))
-        line3 = self.font_gui.render("ESC para volver al menu principal.", True, (220, 220, 220))
-        if self.music.ready:
-            music_text = f"Musica: cargada en {LOCAL_MUSIC_DIR}"
-            music_color = (120, 220, 160)
-        elif self.music.failed:
-            music_text = "Musica: error detectado, el juego sigue sin audio"
-            music_color = (255, 170, 120)
+        self.screen.blit(title, (WIDTH // 2 - title.get_width() // 2, 70))
+
+        mx, my = pygame.mouse.get_pos()
+        mouse_down = pygame.mouse.get_pressed()[0]
+
+        tab_rects = []
+        tab_x = 140
+        for tab_index, tab_name in enumerate(self.options_tabs):
+            color = (200, 200, 255) if tab_index == self.options_tab else (140, 140, 180)
+            tab_label = self.font_gui.render(tab_name, True, color)
+            rect = pygame.Rect(tab_x - 10, 176, tab_label.get_width() + 20, tab_label.get_height() + 12)
+            tab_rects.append((rect, ("tab", tab_index)))
+            pygame.draw.rect(self.screen, (70, 70, 90), rect, border_radius=12)
+            pygame.draw.rect(self.screen, (255, 255, 255), rect, 2, border_radius=12)
+            self.screen.blit(tab_label, (tab_x, 180))
+            tab_x += tab_label.get_width() + 80
+
+        instruction = self.font_small.render("TAB: cambiar pestaña | ARRIBA/ABAJO: navegar | IZQ/DER: ajustar | ENTER: seleccionar", True, (180, 180, 190))
+        self.screen.blit(instruction, (WIDTH // 2 - instruction.get_width() // 2, 240))
+
+        if self.options_tab == 0:
+            section_rects = self._draw_graphics_options()
+        elif self.options_tab == 1:
+            section_rects = self._draw_sound_options()
         else:
-            music_text = "Musica: creando carpeta local y descargando desde GitHub"
-            music_color = (180, 180, 210)
-        line4 = self.font_gui.render(music_text, True, music_color)
-        self.screen.blit(title, (WIDTH // 2 - title.get_width() // 2, 120))
-        self.screen.blit(line1, (WIDTH // 2 - line1.get_width() // 2, 300))
-        self.screen.blit(line2, (WIDTH // 2 - line2.get_width() // 2, 350))
-        self.screen.blit(line3, (WIDTH // 2 - line3.get_width() // 2, 430))
-        self.screen.blit(line4, (WIDTH // 2 - line4.get_width() // 2, 500))
+            section_rects = self._draw_controls_options()
+
+        footer = self.font_small.render("ESC para volver al menu principal.", True, (200, 200, 200))
+        self.screen.blit(footer, (WIDTH // 2 - footer.get_width() // 2, HEIGHT - 60))
+
+        self.options_click_rects = tab_rects + section_rects
+        if mouse_down and not self.mouse_click_latch:
+            self._handle_options_mouse(mx, my)
+            self.mouse_click_latch = True
+        if not mouse_down:
+            self.mouse_click_latch = False
+
+    def _draw_graphics_options(self):
+        sections = [
+            ("Calidad de graficos", self.graphics_quality_labels[self.graphics_quality]),
+            ("Mostrar FPS", "SI" if self.show_fps else "NO"),
+        ]
+        rects = []
+        for index, (name, value) in enumerate(sections):
+            label = self.font_btn.render(name, True, (255, 255, 255))
+            value_label = self.font_gui.render(value, True, (180, 220, 255))
+            y = 320 + index * 110
+            highlight_rect = pygame.Rect(100, y - 10, WIDTH - 200, 90)
+            if index == self.options_cursor:
+                pygame.draw.rect(self.screen, (80, 100, 150), highlight_rect, border_radius=18)
+            pygame.draw.rect(self.screen, (255, 255, 255), highlight_rect, 2, border_radius=18)
+            self.screen.blit(label, (130, y))
+            self.screen.blit(value_label, (WIDTH - value_label.get_width() - 140, y + 12))
+            rects.append((highlight_rect, ("graphics", index)))
+
+        hint = self.font_small.render("La calidad ajusta el detalle del camino y efectos.", True, (180, 180, 200))
+        self.screen.blit(hint, (140, 520))
+        return rects
+
+    def _draw_sound_options(self):
+        sections = [
+            ("Volumen general", f"{int(self.master_volume * 100)}%"),
+            ("Volumen musica", f"{int(self.music_volume * 100)}%"),
+            ("Volumen efectos", f"{int(self.sfx_volume * 100)}%"),
+        ]
+        rects = []
+        for index, (name, value) in enumerate(sections):
+            label = self.font_btn.render(name, True, (255, 255, 255))
+            value_label = self.font_gui.render(value, True, (210, 230, 180))
+            y = 300 + index * 100
+            highlight_rect = pygame.Rect(100, y - 10, WIDTH - 200, 90)
+            if index == self.options_cursor:
+                pygame.draw.rect(self.screen, (80, 100, 150), highlight_rect, border_radius=18)
+            pygame.draw.rect(self.screen, (255, 255, 255), highlight_rect, 2, border_radius=18)
+            self.screen.blit(label, (130, y))
+            self.screen.blit(value_label, (WIDTH - value_label.get_width() - 140, y + 12))
+            rects.append((highlight_rect, ("sound", index)))
+
+        hint = self.font_small.render("Ajusta la musica y los efectos del juego.", True, (180, 180, 200))
+        self.screen.blit(hint, (140, 520))
+        return rects
+
+    def _draw_controls_options(self):
+        title = self.font_gui.render("Reasigna tus teclas", True, (220, 220, 255))
+        self.screen.blit(title, (140, 300))
+        rects = []
+        for index, (action, label_text) in enumerate(self.control_binding_labels):
+            assigned_key = self.key_bindings.get(action, pygame.K_UNKNOWN)
+            key_name = pygame.key.name(assigned_key).upper()
+            label = self.font_btn.render(label_text, True, (255, 255, 255))
+            value_label = self.font_gui.render(key_name, True, (220, 180, 220))
+            y = 360 + index * 70
+            highlight_rect = pygame.Rect(100, y - 8, WIDTH - 200, 70)
+            if index == self.options_cursor:
+                pygame.draw.rect(self.screen, (80, 100, 150), highlight_rect, border_radius=18)
+            pygame.draw.rect(self.screen, (255, 255, 255), highlight_rect, 2, border_radius=18)
+            self.screen.blit(label, (130, y))
+            self.screen.blit(value_label, (WIDTH - value_label.get_width() - 140, y + 8))
+            rects.append((highlight_rect, ("controls", index)))
+
+        if self.rebinding_action:
+            prompt_name = self._binding_label(self.rebinding_action)
+            prompt = self.font_small.render(f"Presiona una tecla para reasignar {prompt_name}", True, (240, 180, 180))
+        else:
+            prompt = self.font_small.render("ENTER para reasignar la tecla seleccionada.", True, (180, 180, 200))
+        self.screen.blit(prompt, (140, HEIGHT - 120))
+        return rects
+
+    def _change_options_value(self, delta):
+        if self.options_tab == 0:
+            if self.options_cursor == 0:
+                self.graphics_quality = max(0, min(2, self.graphics_quality + delta))
+            elif self.options_cursor == 1:
+                self.show_fps = delta > 0
+        elif self.options_tab == 1:
+            if self.options_cursor == 0:
+                self.master_volume = max(0.0, min(1.0, self.master_volume + delta * 0.05))
+            elif self.options_cursor == 1:
+                self.music_volume = max(0.0, min(1.0, self.music_volume + delta * 0.05))
+            elif self.options_cursor == 2:
+                self.sfx_volume = max(0.0, min(1.0, self.sfx_volume + delta * 0.05))
+            self.music.master_volume = self.master_volume
+            self.music.sfx_volume = self.sfx_volume
+            self.music.background_volume = self.music_volume
+            self.music.apply_volume_settings()
+
+    def _select_options_item(self):
+        if self.options_tab == 2 and not self.rebinding_action:
+            self.rebinding_action = self.control_binding_labels[self.options_cursor][0]
+
+    def _binding_label(self, action):
+        for act, label in self.control_binding_labels:
+            if act == action:
+                return label
+        return action
+
+    def _handle_options_mouse(self, mx, my):
+        if not hasattr(self, "options_click_rects"):
+            return
+        for rect, payload in self.options_click_rects:
+            if rect.collidepoint(mx, my):
+                self.music.play_ui_click()
+                kind, index = payload
+                if kind == "tab":
+                    self.options_tab = index
+                    self.options_cursor = 0
+                elif kind == "graphics":
+                    self.options_cursor = index
+                    if index == 0:
+                        self.graphics_quality = (self.graphics_quality + 1) % len(self.graphics_quality_labels)
+                    elif index == 1:
+                        self.show_fps = not self.show_fps
+                elif kind == "sound":
+                    self.options_cursor = index
+                    delta = 1 if mx > rect.centerx else -1
+                    self._change_options_value(delta)
+                elif kind == "controls":
+                    self.options_cursor = index
+                    if not self.rebinding_action:
+                        self._select_options_item()
+                break
 
     def spawn_upgrade(self):
         bias_x = self.player.dir_x if abs(self.player.dir_x) > 0.05 else math.cos(math.radians(self.player.angle))
@@ -1233,13 +1416,34 @@ class Game:
                         sys.exit()
                     if event.type == pygame.KEYDOWN:
                         if event.key == pygame.K_ESCAPE:
-                            if self.state in ("MENU_PLAY", "OPTIONS"):
+                            if self.state == "OPTIONS":
+                                self.rebinding_action = None
+                                self.state = "MENU_MAIN"
+                            elif self.state == "MENU_PLAY":
                                 self.state = "MENU_MAIN"
                             elif self.state == "PLAYING":
                                 self.state = "MENU_MAIN"
                                 self.reset_game()
                             elif self.state == "GAME_OVER":
                                 self.handle_game_over_action("menu")
+                        elif self.state == "OPTIONS":
+                            if self.rebinding_action:
+                                if event.key != pygame.K_ESCAPE:
+                                    self.key_bindings[self.rebinding_action] = event.key
+                                self.rebinding_action = None
+                            elif event.key == pygame.K_TAB:
+                                self.options_tab = (self.options_tab + 1) % len(self.options_tabs)
+                                self.options_cursor = 0
+                            elif event.key == pygame.K_UP:
+                                self.options_cursor = max(0, self.options_cursor - 1)
+                            elif event.key == pygame.K_DOWN:
+                                max_rows = 2 if self.options_tab == 0 else 3 if self.options_tab == 1 else len(self.control_binding_labels)
+                                self.options_cursor = min(max_rows - 1, self.options_cursor + 1)
+                            elif event.key in (pygame.K_LEFT, pygame.K_RIGHT):
+                                delta = 1 if event.key == pygame.K_RIGHT else -1
+                                self._change_options_value(delta)
+                            elif event.key in (pygame.K_RETURN, pygame.K_SPACE):
+                                self._select_options_item()
                         elif self.state == "GAME_OVER":
                             if event.key in (pygame.K_r, pygame.K_RETURN, pygame.K_SPACE):
                                 self.handle_game_over_action("restart")
@@ -1277,7 +1481,7 @@ class Game:
             buffed_ai.max_speed += 7
             buffed_ai.rotation_speed += 2.5
 
-        self.player.update(keys, self.skid_marks)
+        self.player.update(keys, self.skid_marks, self.key_bindings)
         self.music.update_vehicle_audio(self.player)
         for ai in self.ais:
             ai.update(self.player, self.skid_marks)
@@ -1325,7 +1529,8 @@ class Game:
 
     def draw_game(self):
         self.screen.fill(COLOR_BG)
-        draw_infinite_grid(self.screen, self.cam_x, self.cam_y)
+        grid_sizes = [320, 200, 120]
+        draw_infinite_grid(self.screen, self.cam_x, self.cam_y, grid_sizes[self.graphics_quality])
 
         for mark in self.skid_marks:
             mark.draw(self.screen, self.cam_x, self.cam_y)
@@ -1340,6 +1545,10 @@ class Game:
         # UI
         v_text = self.font_gui.render(f"{abs(self.player.speed) * 12:.0f} KM/H", True, COLOR_UI)
         self.screen.blit(v_text, (40, 30))
+
+        if self.show_fps:
+            fps_text = self.font_small.render(f"FPS: {self.clock.get_fps():.0f}", True, COLOR_UI)
+            self.screen.blit(fps_text, (WIDTH - fps_text.get_width() - 40, 30))
 
         # Vida
         pygame.draw.rect(self.screen, (80, 80, 80), (40, 70, 250, 20), border_radius=10)
