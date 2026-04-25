@@ -4,11 +4,20 @@
 
 ## Componentes
 
-- Juego principal: [main.py](/c:/Users/ADMIN/Documents/coche/main.py)
-- Launcher: [Launcher/Launcher.py](/c:/Users/ADMIN/Documents/coche/Launcher/Launcher.py)
-- Manifiesto de distribucion: [launcher_manifest.json](/c:/Users/ADMIN/Documents/coche/launcher_manifest.json)
-- Manifiesto de musica remota: [music_manifest.json](/c:/Users/ADMIN/Documents/coche/music_manifest.json)
+- Juego principal: [main.py](https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/refs/heads/main/main.py)
+- Launcher: [Launcher/Launcher.py](https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/refs/heads/main/Launcher/Launcher.py)
+- Manifiesto de distribucion: [launcher_manifest.json](https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/refs/heads/main/launcher_manifest.json)
+- Manifiesto de musica remota: [music_manifest.json](https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/refs/heads/main/music_manifest.json)
 - Binario local opcional: `bin/Drift or Die.exe`
+
+## Versiones
+- 1.0.0: Version inicial del juego con todo basico sin jugabilidad sin objetibo sin nada.
+
+- 1.2.0: Version de integracion de de objetibo enemigos puntos
+
+- 1.3.0: version de Musica integracion de esta y parcheo de miles de errores y bugs
+
+- 1.4.0: Verision de mejora del menu de configuraciones
 
 ## Mejoras aplicadas al launcher
 
