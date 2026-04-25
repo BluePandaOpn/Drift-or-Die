@@ -137,9 +137,11 @@ class AudioManager:
         self.engine_channel = None
         self.drift_channel = None
         self.nitro_channel = None
+        self.ui_channel = None
         self.engine_sound = None
         self.drift_sound = None
         self.nitro_sound = None
+        self.click_sound = None
         self.channel_states = {}
         self.drift_release_counter = 0
 
@@ -194,6 +196,7 @@ class AudioManager:
             self.engine_channel = pygame.mixer.Channel(1)
             self.drift_channel = pygame.mixer.Channel(2)
             self.nitro_channel = pygame.mixer.Channel(3)
+            self.ui_channel = pygame.mixer.Channel(4)
             self.enabled = True
             self._log("mixer inicializado y canales reservados")
             return True
@@ -295,28 +298,32 @@ class AudioManager:
 
     def _resolve_effect_candidate_paths(self, effect_key):
         asset_path = self.asset_map.get(effect_key)
+        candidate_bases = []
+        if asset_path:
+            root_path, ext = os.path.splitext(asset_path)
+            candidate_bases.append((root_path, ext.lower()))
+
+        candidate_bases.append((os.path.join(USER_MUSIC_DIR, effect_key), ""))
+        candidate_bases.append((os.path.join(os.path.dirname(__file__), "assets", "music", effect_key), ""))
         if not asset_path:
-            return []
+            asset_path = ""
 
-        root_path, ext = os.path.splitext(asset_path)
         candidates = []
-        preferred_extensions = (".wav", ".ogg", ".mp3", ".m4a")
-        if ext.lower() in preferred_extensions:
-            ordered_extensions = tuple(
-                candidate_ext for candidate_ext in preferred_extensions if candidate_ext != ext.lower()
-            ) + (ext.lower(),)
-            ordered_extensions = (".wav", ".ogg", ext.lower(), ".mp3", ".m4a")
-        else:
-            ordered_extensions = preferred_extensions + (ext.lower(),)
-
+        preferred_extensions = SUPPORTED_EFFECT_EXTENSIONS
         seen = set()
-        for candidate_ext in ordered_extensions:
-            candidate_path = root_path + candidate_ext
-            if candidate_path in seen:
-                continue
-            seen.add(candidate_path)
-            if os.path.isfile(candidate_path):
-                candidates.append(candidate_path)
+        for root_path, current_ext in candidate_bases:
+            ordered_extensions = [".wav", ".ogg"]
+            if current_ext and current_ext not in ordered_extensions:
+                ordered_extensions.append(current_ext)
+            ordered_extensions.extend(ext for ext in preferred_extensions if ext not in ordered_extensions)
+
+            for candidate_ext in ordered_extensions:
+                candidate_path = root_path + candidate_ext
+                if candidate_path in seen:
+                    continue
+                seen.add(candidate_path)
+                if os.path.isfile(candidate_path):
+                    candidates.append(candidate_path)
 
         if asset_path not in seen and os.path.isfile(asset_path):
             candidates.append(asset_path)
@@ -327,6 +334,7 @@ class AudioManager:
             ("accelerate", "engine_sound"),
             ("drift", "drift_sound"),
             ("nitro", "nitro_sound"),
+            ("click", "click_sound"),
         )
         self._log("cargando efectos en memoria con fallback de formatos")
         for effect_key, attr_name in effect_targets:
@@ -345,7 +353,7 @@ class AudioManager:
                     self.failed = True
                     self._log(f"fallo al cargar efecto: {effect_key} archivo={candidate_path}")
 
-        if not any((self.engine_sound, self.drift_sound, self.nitro_sound)):
+        if not any((self.engine_sound, self.drift_sound, self.nitro_sound, self.click_sound)):
             self.status = "playback-error"
             self._log("ningun efecto pudo cargarse en memoria")
             return
@@ -401,6 +409,36 @@ class AudioManager:
             NITRO_BASE_VOLUME + (speed_ratio * NITRO_SPEED_VOLUME),
         )
 
+    def stop_gameplay_effects(self):
+        for channel_name, channel in (
+            ("accelerate", self.engine_channel),
+            ("drift", self.drift_channel),
+            ("nitro", self.nitro_channel),
+        ):
+            if channel is None:
+                continue
+            try:
+                if channel.get_busy():
+                    channel.stop()
+                    self._log(f"canal={channel_name} detenido por parada de gameplay")
+            except pygame.error:
+                self.failed = True
+                self._log(f"error al detener gameplay en canal={channel_name}")
+            self.channel_states[channel_name] = (False, 0.0)
+        self.drift_release_counter = 0
+
+    def play_ui_click(self):
+        if self.ui_channel is None or self.click_sound is None:
+            return
+        try:
+            if self.ui_channel.get_busy():
+                self.ui_channel.stop()
+            self.ui_channel.play(self.click_sound)
+            self._log("ui click reproducido")
+        except pygame.error:
+            self.failed = True
+            self._log("error reproduciendo ui click")
+
     def _update_loop_channel(self, channel_name, channel, sound, should_play, volume):
         if channel is None or sound is None:
             return
@@ -433,7 +471,7 @@ class AudioManager:
             return
         try:
             self._log("deteniendo sistema de audio")
-            for channel in (self.engine_channel, self.drift_channel, self.nitro_channel):
+            for channel in (self.engine_channel, self.drift_channel, self.nitro_channel, self.ui_channel):
                 if channel is not None:
                     channel.stop()
             pygame.mixer.music.stop()
@@ -831,6 +869,7 @@ class Game:
             {"name": "MENU", "action": "menu"},
         ]
         self.selected_class = 0
+        self.mouse_click_latch = False
         self.reset_game()
 
     def reset_game(self):
@@ -852,6 +891,7 @@ class Game:
         self.state = "PLAYING"
 
     def handle_game_over_action(self, action):
+        self.music.play_ui_click()
         if action == "restart":
             self.start_game()
         else:
@@ -866,6 +906,7 @@ class Game:
         self.screen.blit(subtitle, (WIDTH // 2 - subtitle.get_width() // 2, 200))
 
         mx, my = pygame.mouse.get_pos()
+        mouse_down = pygame.mouse.get_pressed()[0]
         for i, button in enumerate(self.main_menu_buttons):
             rect = pygame.Rect(WIDTH // 2 - 180, 290 + i * 110, 360, 78)
             is_hover = rect.collidepoint(mx, my)
@@ -877,7 +918,9 @@ class Game:
             label = self.font_btn.render(button["name"], True, (255, 255, 255))
             self.screen.blit(label, (rect.centerx - label.get_width() // 2, rect.centery - label.get_height() // 2))
 
-            if is_hover and pygame.mouse.get_pressed()[0]:
+            if is_hover and mouse_down and not self.mouse_click_latch:
+                self.mouse_click_latch = True
+                self.music.play_ui_click()
                 if button["action"] == "play":
                     self.state = "MENU_PLAY"
                 elif button["action"] == "options":
@@ -887,6 +930,9 @@ class Game:
                     pygame.quit()
                     sys.exit()
                 pygame.time.delay(180)
+                return
+        if not mouse_down:
+            self.mouse_click_latch = False
 
     def draw_play_menu(self):
         self.screen.fill((30, 30, 40))
@@ -898,6 +944,7 @@ class Game:
         self.screen.blit(back_text, (40, 40))
 
         mx, my = pygame.mouse.get_pos()
+        mouse_down = pygame.mouse.get_pressed()[0]
         for i, opt in enumerate(self.menu_options):
             rect = pygame.Rect(WIDTH // 2 - 250, 280 + i * 130, 500, 100)
             is_hover = rect.collidepoint(mx, my)
@@ -911,9 +958,14 @@ class Game:
             self.screen.blit(name, (rect.x + 20, rect.y + 15))
             self.screen.blit(desc, (rect.x + 20, rect.y + 60))
 
-            if is_hover and pygame.mouse.get_pressed()[0]:
+            if is_hover and mouse_down and not self.mouse_click_latch:
+                self.mouse_click_latch = True
+                self.music.play_ui_click()
                 self.start_game(i)
                 pygame.time.delay(200)
+                return
+        if not mouse_down:
+            self.mouse_click_latch = False
 
     def draw_options_menu(self):
         self.screen.fill((25, 28, 38))
@@ -1095,6 +1147,7 @@ class Game:
                         self.invul_timer = 90
                         self.score = max(0, self.score - 1000)
                         if self.player.health <= 0:
+                            self.music.stop_gameplay_effects()
                             self.state = "GAME_OVER"
 
     def draw_game(self):
@@ -1145,6 +1198,7 @@ class Game:
         self.screen.blit(instr, (WIDTH // 2 - instr.get_width() // 2, HEIGHT // 2 + 100))
 
         mx, my = pygame.mouse.get_pos()
+        mouse_down = pygame.mouse.get_pressed()[0]
         for i, button in enumerate(self.game_over_buttons):
             rect = pygame.Rect(WIDTH // 2 - 240 + i * 260, HEIGHT // 2 + 155, 220, 68)
             is_hover = rect.collidepoint(mx, my)
@@ -1156,9 +1210,13 @@ class Game:
             label = self.font_btn.render(button["name"], True, (255, 255, 255))
             self.screen.blit(label, (rect.centerx - label.get_width() // 2, rect.centery - label.get_height() // 2))
 
-            if is_hover and pygame.mouse.get_pressed()[0]:
+            if is_hover and mouse_down and not self.mouse_click_latch:
+                self.mouse_click_latch = True
                 self.handle_game_over_action(button["action"])
                 pygame.time.delay(180)
+                return
+        if not mouse_down:
+            self.mouse_click_latch = False
 
 
 if __name__ == "__main__":
