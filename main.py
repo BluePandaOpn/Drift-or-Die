@@ -167,6 +167,9 @@ class Car:
         self.braking = 0.50
         self.rotation_speed = 4.0 if is_ai else 5.0
         self.drift_factor = 0.88
+        self.handbrake_drift = 0.90
+        self.grip = 0.22 if is_ai else 0.31
+        self.side_friction = 0.86 if is_ai else 0.76
 
         # Jugador
         self.health = 100
@@ -192,16 +195,23 @@ class Car:
     def setup_class(self, choice):
         if choice == 0:  # DRIFT KING
             self.drift_factor = 0.95
+            self.handbrake_drift = 0.935
             self.rotation_speed = 6.5
+            self.grip = 0.25
+            self.side_friction = 0.74
             self.color = (150, 50, 250)
         elif choice == 1:  # SPEED DEMON
             self.max_speed = 18.0
             self.acceleration = 0.35
+            self.grip = 0.33
+            self.side_friction = 0.80
             self.color = (50, 200, 50)
         elif choice == 2:  # NITRO JUNKIE
             self.nitro_max = 200
             self.nitro_level = 200
             self.nitro_power = 1.0
+            self.grip = 0.28
+            self.side_friction = 0.78
             self.color = COLOR_NITRO
 
     def apply_upgrade(self, upg_type):
@@ -215,7 +225,9 @@ class Car:
             self.nitro_level = self.nitro_max
         elif upg_type == "drift":
             self.drift_factor = min(0.98, self.drift_factor + 0.01)
+            self.handbrake_drift = min(0.955, self.handbrake_drift + 0.003)
             self.rotation_speed += 0.4
+            self.side_friction = max(0.72, self.side_friction - 0.008)
         elif upg_type == "magnet":
             self.magnet_timer = MAGNET_DURATION
         elif upg_type == "shield":
@@ -230,7 +242,9 @@ class Car:
                 self.acceleration = max(0.15, self.acceleration - 0.06)
             elif removed == "drift":
                 self.drift_factor = max(0.85, self.drift_factor - 0.01)
+                self.handbrake_drift = max(0.88, self.handbrake_drift - 0.003)
                 self.rotation_speed = max(3.0, self.rotation_speed - 0.4)
+                self.side_friction = min(0.90, self.side_friction + 0.01)
             return True
         return False
 
@@ -310,20 +324,52 @@ class Car:
         self.is_braking = input_handbrake
         self.speed = max(-actual_max / 2, min(self.speed, actual_max))
 
+        turn_input = 0
+        if input_left:
+            turn_input += 1
+        if input_right:
+            turn_input -= 1
+
         if self.speed != 0:
             rot_dir = 1 if self.speed > 0 else -1
             turn_mod = min(1.0, abs(self.speed) / 3.5)
-            if input_left:
-                self.angle += self.rotation_speed * rot_dir * turn_mod
-            if input_right:
-                self.angle -= self.rotation_speed * rot_dir * turn_mod
+            if self.is_braking:
+                turn_mod = min(1.10, turn_mod + 0.06)
+            self.angle += turn_input * self.rotation_speed * rot_dir * turn_mod
 
         target_dx = math.cos(math.radians(self.angle)) * self.speed
         target_dy = -math.sin(math.radians(self.angle)) * self.speed
 
-        drift_smooth = 0.97 if self.is_braking else self.drift_factor
-        self.dir_x = self.dir_x * drift_smooth + target_dx * (1 - drift_smooth)
-        self.dir_y = self.dir_y * drift_smooth + target_dy * (1 - drift_smooth)
+        if abs(self.dir_x) + abs(self.dir_y) < 0.001:
+            self.dir_x = target_dx
+            self.dir_y = target_dy
+        else:
+            forward_x = math.cos(math.radians(self.angle))
+            forward_y = -math.sin(math.radians(self.angle))
+            lateral_x = -forward_y
+            lateral_y = forward_x
+            speed_ratio = min(1.0, abs(self.speed) / max(1.0, self.max_speed))
+            drift_scale = 0.35 + speed_ratio * 0.50
+
+            forward_speed = self.dir_x * forward_x + self.dir_y * forward_y
+            lateral_speed = self.dir_x * lateral_x + self.dir_y * lateral_y
+
+            grip = self.grip + (1.0 - speed_ratio) * 0.12
+            if self.is_braking:
+                grip *= 0.88
+            forward_speed += (self.speed - forward_speed) * grip
+
+            side_friction = self.side_friction
+            if self.is_braking:
+                side_friction = min(0.92, self.handbrake_drift + speed_ratio * 0.015)
+            lateral_speed *= side_friction
+
+            if turn_input != 0 and abs(self.speed) > 2.0:
+                drift_push = (0.08 if self.is_braking else 0.03) * drift_scale
+                lateral_speed += turn_input * abs(self.speed) * drift_push
+
+            self.dir_x = forward_x * forward_speed + lateral_x * lateral_speed
+            self.dir_y = forward_y * forward_speed + lateral_y * lateral_speed
 
         drift_val = math.hypot(target_dx - self.dir_x, target_dy - self.dir_y)
         if (drift_val > 1.2 or self.is_braking) and abs(self.speed) > 3:
@@ -405,6 +451,11 @@ class Game:
             {"name": "SPEED DEMON", "desc": "+Velocidad, +Aceleracion", "color": (50, 200, 50)},
             {"name": "NITRO JUNKIE", "desc": "+Capacidad Nitro, +Empuje", "color": COLOR_NITRO},
         ]
+        self.game_over_buttons = [
+            {"name": "REINICIAR", "action": "restart"},
+            {"name": "MENU", "action": "menu"},
+        ]
+        self.selected_class = 0
         self.reset_game()
 
     def reset_game(self):
@@ -417,6 +468,20 @@ class Game:
         self.buff_event_timer = 0
         self.invul_timer = 0
         self.maintain_upgrade_density(force_full=True)
+
+    def start_game(self, class_index=None):
+        if class_index is not None:
+            self.selected_class = class_index
+        self.reset_game()
+        self.player.setup_class(self.selected_class)
+        self.state = "PLAYING"
+
+    def handle_game_over_action(self, action):
+        if action == "restart":
+            self.start_game()
+        else:
+            self.state = "MENU_MAIN"
+            self.reset_game()
 
     def draw_main_menu(self):
         self.screen.fill((30, 30, 40))
@@ -471,9 +536,7 @@ class Game:
             self.screen.blit(desc, (rect.x + 20, rect.y + 60))
 
             if is_hover and pygame.mouse.get_pressed()[0]:
-                self.reset_game()
-                self.player.setup_class(i)
-                self.state = "PLAYING"
+                self.start_game(i)
                 pygame.time.delay(200)
 
     def draw_options_menu(self):
@@ -565,9 +628,13 @@ class Game:
                         elif self.state == "PLAYING":
                             self.state = "MENU_MAIN"
                             self.reset_game()
+                        elif self.state == "GAME_OVER":
+                            self.handle_game_over_action("menu")
                     elif self.state == "GAME_OVER":
-                        self.state = "MENU_MAIN"
-                        self.reset_game()
+                        if event.key in (pygame.K_r, pygame.K_RETURN, pygame.K_SPACE):
+                            self.handle_game_over_action("restart")
+                        elif event.key in (pygame.K_m, pygame.K_ESCAPE):
+                            self.handle_game_over_action("menu")
 
             if self.state == "MENU_MAIN":
                 self.draw_main_menu()
@@ -683,10 +750,26 @@ class Game:
         self.screen.blit(overlay, (0, 0))
         msg = self.font_msg.render("JUEGO TERMINADO", True, (255, 50, 50))
         sub = self.font_btn.render(f"Puntaje Final: {self.score}", True, (255, 255, 255))
-        instr = self.font_gui.render("Presiona cualquier tecla para ir al menu", True, (200, 200, 200))
+        instr = self.font_gui.render("R o Enter: reiniciar | M o Esc: menu", True, (200, 200, 200))
         self.screen.blit(msg, (WIDTH // 2 - msg.get_width() // 2, HEIGHT // 2 - 80))
         self.screen.blit(sub, (WIDTH // 2 - sub.get_width() // 2, HEIGHT // 2 + 20))
         self.screen.blit(instr, (WIDTH // 2 - instr.get_width() // 2, HEIGHT // 2 + 100))
+
+        mx, my = pygame.mouse.get_pos()
+        for i, button in enumerate(self.game_over_buttons):
+            rect = pygame.Rect(WIDTH // 2 - 240 + i * 260, HEIGHT // 2 + 155, 220, 68)
+            is_hover = rect.collidepoint(mx, my)
+            color = (200, 70, 70) if button["action"] == "restart" else (70, 110, 185)
+            fill = color if is_hover else (50, 50, 66)
+            pygame.draw.rect(self.screen, fill, rect, border_radius=16)
+            pygame.draw.rect(self.screen, (255, 255, 255), rect, 3, border_radius=16)
+
+            label = self.font_btn.render(button["name"], True, (255, 255, 255))
+            self.screen.blit(label, (rect.centerx - label.get_width() // 2, rect.centery - label.get_height() // 2))
+
+            if is_hover and pygame.mouse.get_pressed()[0]:
+                self.handle_game_over_action(button["action"])
+                pygame.time.delay(180)
 
 
 if __name__ == "__main__":
