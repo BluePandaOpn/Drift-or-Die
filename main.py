@@ -243,6 +243,68 @@ class AudioManager:
         except (TypeError, ValueError):
             return default_value
 
+    def _get_track_search_paths(self, filename, track_name=None):
+        normalized_filename = os.path.basename(str(filename or ""))
+        base_name, base_ext = os.path.splitext(normalized_filename)
+        fallback_name = track_name or base_name
+        candidate_names = []
+        for candidate in (normalized_filename, fallback_name):
+            if candidate and candidate not in candidate_names:
+                candidate_names.append(candidate)
+
+        search_dirs = []
+        for directory in (
+            LOCAL_MUSIC_DIR,
+            os.path.join(RUNTIME_ROOT, "music"),
+            RUNTIME_ROOT,
+            os.path.join(os.getcwd(), "assets", "music"),
+            os.path.join(os.getcwd(), "music"),
+            os.getcwd(),
+        ):
+            if directory and directory not in search_dirs:
+                search_dirs.append(directory)
+
+        candidates = []
+        seen = set()
+        preferred_extensions = (base_ext.lower(),) if base_ext else tuple()
+        all_extensions = preferred_extensions + tuple(
+            ext for ext in SUPPORTED_EFFECT_EXTENSIONS if ext not in preferred_extensions
+        )
+
+        for directory in search_dirs:
+            for candidate_name in candidate_names:
+                candidate_base, candidate_ext = os.path.splitext(candidate_name)
+                direct_path = os.path.join(directory, candidate_name)
+                if direct_path not in seen:
+                    seen.add(direct_path)
+                    candidates.append(direct_path)
+
+                for extension in all_extensions:
+                    if not extension:
+                        continue
+                    path_with_ext = os.path.join(directory, candidate_base + extension)
+                    if path_with_ext in seen:
+                        continue
+                    seen.add(path_with_ext)
+                    candidates.append(path_with_ext)
+
+                if candidate_ext:
+                    continue
+                for extension in SUPPORTED_EFFECT_EXTENSIONS:
+                    path_with_ext = os.path.join(directory, candidate_name + extension)
+                    if path_with_ext in seen:
+                        continue
+                    seen.add(path_with_ext)
+                    candidates.append(path_with_ext)
+
+        return candidates
+
+    def _find_existing_track_path(self, filename, track_name=None):
+        for candidate_path in self._get_track_search_paths(filename, track_name):
+            if os.path.isfile(candidate_path):
+                return candidate_path
+        return ""
+
     def _ensure_assets(self, tracks, version, cache):
         resolved_assets = {}
         cache_version = cache.get("version")
@@ -260,14 +322,13 @@ class AudioManager:
                 continue
 
             target_path = os.path.join(LOCAL_MUSIC_DIR, filename)
+            existing_path = self._find_existing_track_path(filename, track_name)
             cached_track = cache_tracks.get(track_name, {})
-            needs_download = (
-                not os.path.isfile(target_path)
-                or cache_version != version
-                or cached_track.get("url") != url
-            )
+            metadata_changed = cache_version != version or cached_track.get("url") != url
+            needs_download = not existing_path
             self._log(
-                f"pista={track_name} archivo={filename} existe={os.path.isfile(target_path)} "
+                f"pista={track_name} archivo={filename} existe={bool(existing_path)} "
+                f"ruta_local={existing_path or '-'} metadata_changed={metadata_changed} "
                 f"needs_download={needs_download}"
             )
 
@@ -279,14 +340,15 @@ class AudioManager:
                     with open(temp_path, "wb") as file_obj:
                         file_obj.write(payload)
                     os.replace(temp_path, target_path)
+                    existing_path = target_path
                     self._log(f"descarga completada para {track_name}: {target_path}")
                 except (urllib.error.URLError, TimeoutError, OSError):
                     self._log(f"fallo la descarga de {track_name}. se intentara usar copia local si existe")
                     pass
 
-            if os.path.isfile(target_path):
-                resolved_assets[track_name] = target_path
-                self._log(f"pista disponible para {track_name}: {target_path}")
+            if existing_path and os.path.isfile(existing_path):
+                resolved_assets[track_name] = existing_path
+                self._log(f"pista disponible para {track_name}: {existing_path}")
             else:
                 self._log(f"pista no disponible para {track_name}")
 
@@ -312,7 +374,8 @@ class AudioManager:
             candidate_bases.append((root_path, ext.lower()))
 
         candidate_bases.append((os.path.join(LOCAL_MUSIC_DIR, effect_key), ""))
-        candidate_bases.append((os.path.join(os.path.dirname(__file__), "assets", "music", effect_key), ""))
+        candidate_bases.append((os.path.join(RUNTIME_ROOT, "assets", "music", effect_key), ""))
+        candidate_bases.append((os.path.join(RUNTIME_ROOT, effect_key), ""))
         if not asset_path:
             asset_path = ""
 
