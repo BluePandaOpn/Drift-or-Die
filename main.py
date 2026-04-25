@@ -13,14 +13,8 @@ import pygame
 WIDTH, HEIGHT = 1200, 800
 FPS = 60
 GAME_TITLE = "Drift or Die"
-USER_PROFILE = os.path.expanduser("~")
-DOCUMENTS_DIR = os.path.join(USER_PROFILE, "Documents")
-USER_GAME_DIR = os.path.join(DOCUMENTS_DIR, "DriftOrDie")
-USER_MUSIC_DIR = os.path.join(USER_GAME_DIR, "assets", "music")
 RAW_BASE_URL = "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main"
 MUSIC_MANIFEST_URL = f"{RAW_BASE_URL}/music_manifest.json"
-LOCAL_MUSIC_MANIFEST_PATH = os.path.join(os.path.dirname(__file__), "music_manifest.json")
-MUSIC_CACHE_METADATA_PATH = os.path.join(USER_MUSIC_DIR, "music_cache.json")
 DEFAULT_MUSIC_VOLUME = 0.35
 ENGINE_BASE_VOLUME = 0.08
 ENGINE_SPEED_VOLUME = 0.35
@@ -62,6 +56,19 @@ SHIELD_DURATION = 300
 MAGNET_DURATION = 300
 AI_INTERCEPT_ANTICIPATION = 22
 AI_RESPAWN_DISTANCE = 2000
+
+
+def get_runtime_root():
+    if getattr(sys, "frozen", False):
+        return os.path.dirname(sys.executable)
+    return os.path.dirname(os.path.abspath(__file__))
+
+
+RUNTIME_ROOT = get_runtime_root()
+LOCAL_ASSETS_DIR = os.path.join(RUNTIME_ROOT, "assets")
+LOCAL_MUSIC_DIR = os.path.join(LOCAL_ASSETS_DIR, "music")
+LOCAL_MUSIC_MANIFEST_PATH = os.path.join(RUNTIME_ROOT, "music_manifest.json")
+MUSIC_CACHE_METADATA_PATH = os.path.join(LOCAL_MUSIC_DIR, "music_cache.json")
 
 
 def world_to_screen(x, y, cam_x, cam_y):
@@ -158,8 +165,9 @@ class AudioManager:
 
     def _bootstrap_audio(self):
         try:
-            self._log(f"asegurando carpeta local de musica: {USER_MUSIC_DIR}")
-            ensure_directory(USER_MUSIC_DIR)
+            self._log(f"directorio base del juego: {RUNTIME_ROOT}")
+            self._log(f"asegurando carpeta local de musica: {LOCAL_MUSIC_DIR}")
+            ensure_directory(LOCAL_MUSIC_DIR)
             if not self._init_mixer():
                 return
 
@@ -251,7 +259,7 @@ class AudioManager:
                 self._log(f"pista ignorada sin filename valido: {track_name}")
                 continue
 
-            target_path = os.path.join(USER_MUSIC_DIR, filename)
+            target_path = os.path.join(LOCAL_MUSIC_DIR, filename)
             cached_track = cache_tracks.get(track_name, {})
             needs_download = (
                 not os.path.isfile(target_path)
@@ -303,7 +311,7 @@ class AudioManager:
             root_path, ext = os.path.splitext(asset_path)
             candidate_bases.append((root_path, ext.lower()))
 
-        candidate_bases.append((os.path.join(USER_MUSIC_DIR, effect_key), ""))
+        candidate_bases.append((os.path.join(LOCAL_MUSIC_DIR, effect_key), ""))
         candidate_bases.append((os.path.join(os.path.dirname(__file__), "assets", "music", effect_key), ""))
         if not asset_path:
             asset_path = ""
@@ -974,7 +982,7 @@ class Game:
         line2 = self.font_gui.render("SHIFT IZQ para usar nitro.", True, (220, 220, 220))
         line3 = self.font_gui.render("ESC para volver al menu principal.", True, (220, 220, 220))
         if self.music.ready:
-            music_text = f"Musica: cargada en {USER_MUSIC_DIR}"
+            music_text = f"Musica: cargada en {LOCAL_MUSIC_DIR}"
             music_color = (120, 220, 160)
         elif self.music.failed:
             music_text = "Musica: error detectado, el juego sigue sin audio"
