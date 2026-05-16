@@ -1,0 +1,43 @@
+[2026-05-16 12:28:00] [runtime] inicio de ejecucion. cwd=C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die runtime_root=C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die
+[2026-05-16 12:28:00] [runtime] log persistente: C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\game_runtime_log.txt
+[2026-05-16 12:28:00] [runtime] python=3.13.13 frozen=False
+[2026-05-16 12:28:00] [runtime] arrancando juego
+[2026-05-16 12:28:00] [game] inicializando pygame
+[2026-05-16 12:28:01] [manager_music] iniciando sistema de audio
+[2026-05-16 12:28:01] [manager_music] directorio base del juego: C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die
+[2026-05-16 12:28:01] [game] audio manager arrancado
+[2026-05-16 12:28:01] [manager_music] asegurando carpeta local de musica: C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music
+[2026-05-16 12:28:01] [game] estado de partida reiniciado
+[2026-05-16 12:28:01] [manager_music] mixer inicializado y canales reservados
+[2026-05-16 12:28:01] [game] game inicializado correctamente
+[2026-05-16 12:28:01] [manager_music] intentando cargar manifiesto remoto: https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-05-16 12:28:01] [game] bucle principal iniciado
+[2026-05-16 12:28:01] [network] descargando bytes desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json
+[2026-05-16 12:28:01] [network] descarga completada desde https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/music_manifest.json (716 bytes)
+[2026-05-16 12:28:01] [manager_music] manifiesto remoto cargado correctamente
+[2026-05-16 12:28:01] [music-cache] json cargado correctamente desde C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\music_cache.json
+[2026-05-16 12:28:01] [manager_music] cache cargada desde: C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\music_cache.json
+[2026-05-16 12:28:01] [manager_music] sincronizando assets. version remota=1.3.0, version cache=1.3.0
+[2026-05-16 12:28:01] [manager_music] pista=background archivo=Musica.mp3 existe=True ruta_local=C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\Musica.mp3 metadata_changed=False needs_download=False
+[2026-05-16 12:28:01] [manager_music] pista disponible para background: C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\Musica.mp3
+[2026-05-16 12:28:01] [manager_music] pista=accelerate archivo=accelerate.wav existe=True ruta_local=C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\accelerate.wav metadata_changed=False needs_download=False
+[2026-05-16 12:28:01] [manager_music] pista disponible para accelerate: C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\accelerate.wav
+[2026-05-16 12:28:01] [manager_music] pista=nitro archivo=nitro.wav existe=True ruta_local=C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\nitro.wav metadata_changed=False needs_download=False
+[2026-05-16 12:28:01] [manager_music] pista disponible para nitro: C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\nitro.wav
+[2026-05-16 12:28:01] [manager_music] pista=click archivo=clic.mp3 existe=True ruta_local=C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\clic.mp3 metadata_changed=False needs_download=False
+[2026-05-16 12:28:01] [manager_music] pista disponible para click: C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\clic.mp3
+[2026-05-16 12:28:01] [music-cache] json guardado correctamente en C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\music_cache.json
+[2026-05-16 12:28:01] [manager_music] cache de audio actualizada en: C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\music_cache.json
+[2026-05-16 12:28:01] [manager_music] volumen de fondo configurado en: 0.35
+[2026-05-16 12:28:01] [manager_music] cargando efectos en memoria con fallback de formatos
+[2026-05-16 12:28:01] [manager_music] efecto cargado: accelerate <- C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\accelerate.wav
+[2026-05-16 12:28:01] [manager_music] sin archivo disponible para efecto=drift
+[2026-05-16 12:28:01] [manager_music] efecto cargado: nitro <- C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\nitro.wav
+[2026-05-16 12:28:01] [manager_music] efecto cargado: click <- C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\clic.mp3
+[2026-05-16 12:28:01] [manager_music] reproduciendo musica de fondo desde C:\Users\ADMIN\Desktop\CForge\0.2\JUEGOS\drift-or-die\assets\music\Musica.mp3
+[2026-05-16 12:28:01] [manager_music] musica de fondo activa en loop
+[2026-05-16 12:28:01] [manager_music] bootstrap completado. estado=ready, assets=['background', 'accelerate', 'nitro', 'click']
+[2026-05-16 12:28:03] [game] evento quit recibido
+[2026-05-16 12:28:03] [manager_music] deteniendo sistema de audio
+[2026-05-16 12:28:03] [manager_music] audio detenido
+[2026-05-16 12:28:03] [runtime] cerrando juego

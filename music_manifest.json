@@ -1,0 +1,22 @@
+{
+  "version": "1.3.0",
+  "background_volume": 0.35,
+  "tracks": {
+    "background": {
+      "filename": "Musica.mp3",
+      "url": "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/assets/music/Musica.mp3"
+    },
+    "accelerate": {
+      "filename": "accelerate.wav",
+      "url": "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/assets/music/accelerate.wav"
+    },
+    "nitro": {
+      "filename": "nitro.wav",
+      "url": "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/assets/music/nitro.wav"
+    },
+    "click": {
+      "filename": "clic.mp3",
+      "url": "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/assets/music/clic.mp3"
+    }
+  }
+}
