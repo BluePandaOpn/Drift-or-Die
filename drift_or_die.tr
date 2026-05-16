@@ -7,7 +7,7 @@
     "folder": "DriftOrDieGame",
     "executable": "Drift-or-Die-1.4.3/dist/drift or die.exe",
     "description": "Quema neumático y domina las curvas en este juego de conducción arcade minimalista. Mantén el control del derrape o enfréntate a la destrucción inmediata. ¿Tienes los reflejos necesarios para sobrevivir?",
-    "cover_url": "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/Assets/image/icono.png",
+    "cover_url": "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/Assets/image/ico.png",
     "screenshots": [
         "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/Assets/image/1.png",
         "https://raw.githubusercontent.com/BluePandaOpn/Drift-or-Die/main/Assets/image/2.png",
